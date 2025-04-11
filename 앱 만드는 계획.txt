@@ -1,0 +1,6 @@
+1. dns주소 구매 (가비아)
+2. dns주소 등록(Netlify)
+3. db서버 (MongDB)
+4. 서버 (Render) + 백엔드(php)
+
+
