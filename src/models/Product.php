@@ -2,16 +2,21 @@
 class Product {
     private $collection;
 
-    public function __construct() {
-        $db = new Database();
+    public function __construct($db = null) {
+        if ($db === null) {
+            $db = new Database();
+        }
         $this->collection = $db->getCollection('products');
     }
 
     public function getProduct($id) {
         try {
             $product = $this->collection->findOne(['_id' => new MongoDB\BSON\ObjectId($id)]);
+            if (!$product) {
+                throw new Exception("상품을 찾을 수 없습니다");
+            }
             return $product;
-        } catch (Exception $e) {
+        } catch (MongoDB\Driver\Exception\Exception $e) {
             throw new Exception("상품 조회 실패: " . $e->getMessage());
         }
     }
@@ -28,7 +33,7 @@ class Product {
                 ]
             );
             return iterator_to_array($products);
-        } catch (Exception $e) {
+        } catch (MongoDB\Driver\Exception\Exception $e) {
             throw new Exception("상품 목록 조회 실패: " . $e->getMessage());
         }
     }
@@ -38,7 +43,7 @@ class Product {
             $data['created_at'] = new MongoDB\BSON\UTCDateTime();
             $result = $this->collection->insertOne($data);
             return $result->getInsertedId();
-        } catch (Exception $e) {
+        } catch (MongoDB\Driver\Exception\Exception $e) {
             throw new Exception("상품 생성 실패: " . $e->getMessage());
         }
     }
@@ -50,8 +55,11 @@ class Product {
                 ['_id' => new MongoDB\BSON\ObjectId($id)],
                 ['$set' => $data]
             );
+            if ($result->getMatchedCount() === 0) {
+                throw new Exception("상품을 찾을 수 없습니다");
+            }
             return $result->getModifiedCount() > 0;
-        } catch (Exception $e) {
+        } catch (MongoDB\Driver\Exception\Exception $e) {
             throw new Exception("상품 수정 실패: " . $e->getMessage());
         }
     }
@@ -59,8 +67,11 @@ class Product {
     public function deleteProduct($id) {
         try {
             $result = $this->collection->deleteOne(['_id' => new MongoDB\BSON\ObjectId($id)]);
-            return $result->getDeletedCount() > 0;
-        } catch (Exception $e) {
+            if ($result->getDeletedCount() === 0) {
+                throw new Exception("상품을 찾을 수 없습니다");
+            }
+            return true;
+        } catch (MongoDB\Driver\Exception\Exception $e) {
             throw new Exception("상품 삭제 실패: " . $e->getMessage());
         }
     }
