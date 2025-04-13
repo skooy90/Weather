@@ -1,0 +1,40 @@
+FROM node:18
+
+# PHP 및 필수 패키지 설치
+RUN apt-get update && apt-get install -y \
+    php \
+    php-cli \
+    php-fpm \
+    php-json \
+    php-common \
+    php-mysql \
+    php-zip \
+    php-gd \
+    php-mbstring \
+    php-curl \
+    php-xml \
+    php-bcmath \
+    php-mongodb \
+    composer \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# 의존성 파일 복사
+COPY package*.json composer.* ./
+
+# Node.js 의존성 설치
+RUN npm ci
+
+# PHP 의존성 설치
+RUN composer install --no-dev --no-scripts
+
+# 소스 코드 복사
+COPY . .
+
+# 테스트 의존성 설치 및 스크립트 실행 권한 설정
+RUN composer install && \
+    chmod +x ./vendor/bin/phpunit
+
+# 테스트 실행
+CMD ["sh", "-c", "npm test && ./vendor/bin/phpunit"] 

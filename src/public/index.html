@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상품 상세 정보</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav class="top-nav">
+                <div class="logo">로고</div>
+                <div class="search-box">
+                    <input type="text" placeholder="검색어를 입력하세요">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+                <div class="user-menu">
+                    <a href="#"><i class="fas fa-user"></i></a>
+                    <a href="#"><i class="fas fa-shopping-cart"></i></a>
+                </div>
+            </nav>
+        </header>
+
+        <main>
+            <div class="product-detail">
+                <div class="product-images">
+                    <div class="main-image">
+                        <img src="assets/images/product-main.jpg" alt="상품 메인 이미지">
+                    </div>
+                    <div class="thumbnail-list">
+                        <img src="assets/images/thumb1.jpg" alt="썸네일 1">
+                        <img src="assets/images/thumb2.jpg" alt="썸네일 2">
+                        <img src="assets/images/thumb3.jpg" alt="썸네일 3">
+                    </div>
+                </div>
+
+                <div class="product-info">
+                    <div class="product-header">
+                        <h1 class="product-title">상품명</h1>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span class="review-count">(1234)</span>
+                        </div>
+                    </div>
+
+                    <div class="product-price">
+                        <span class="price">99,900원</span>
+                        <span class="discount">10% 할인</span>
+                        <span class="original-price">110,000원</span>
+                    </div>
+
+                    <div class="delivery-info">
+                        <p><i class="fas fa-truck"></i> 무료배송</p>
+                        <p><i class="fas fa-undo"></i> 7일 이내 무료 반품</p>
+                    </div>
+
+                    <div class="product-options">
+                        <div class="option-group">
+                            <label>색상</label>
+                            <select>
+                                <option>색상 선택</option>
+                                <option>블랙</option>
+                                <option>화이트</option>
+                            </select>
+                        </div>
+                        <div class="option-group">
+                            <label>사이즈</label>
+                            <select>
+                                <option>사이즈 선택</option>
+                                <option>S</option>
+                                <option>M</option>
+                                <option>L</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="quantity-selector">
+                        <label>수량</label>
+                        <div class="quantity-control">
+                            <button>-</button>
+                            <input type="number" value="1" min="1">
+                            <button>+</button>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="buy-now">바로구매</button>
+                        <button class="add-cart">장바구니</button>
+                        <button class="wishlist"><i class="far fa-heart"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-description">
+                <div class="description-tabs">
+                    <button class="active">상품상세</button>
+                    <button>상품평</button>
+                    <button>Q&A</button>
+                    <button>배송/교환/반품</button>
+                </div>
+                <div class="description-content">
+                    <!-- 상품 상세 내용이 여기에 들어갑니다 -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html> 
