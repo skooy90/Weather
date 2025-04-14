@@ -1,40 +1,29 @@
 FROM php:8.2-apache
 
-# 시스템 패키지 설치
+# 필요한 패키지 설치
 RUN apt-get update && apt-get install -y \
     libssl-dev \
     pkg-config \
     git \
-    unzip \
-    default-mysql-client \
-    openjdk-17-jdk \
-    curl \
-    gnupg \
-    && rm -rf /var/lib/apt/lists/*
+    unzip
 
-# Node.js 설치
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs \
-    && npm install -g npm@latest
-
-# PHP 확장 설치
-RUN docker-php-ext-install pdo pdo_mysql mysqli
-
-# MongoDB 확장 설치
-RUN pecl install mongodb \
-    && docker-php-ext-enable mongodb
-
-# Composer 설치
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# 프로젝트 복사
+# 프로젝트 파일 복사
 COPY . /var/www/html/
+
+# Apache 설정
+RUN echo '<VirtualHost *:80>\n\
+    ServerAdmin webmaster@localhost\n\
+    DocumentRoot /var/www/html/src/public\n\
+    <Directory /var/www/html/src/public>\n\
+        Options Indexes FollowSymLinks\n\
+        AllowOverride All\n\
+        Require all granted\n\
+    </Directory>\n\
+    ErrorLog ${APACHE_LOG_DIR}/error.log\n\
+    CustomLog ${APACHE_LOG_DIR}/access.log combined\n\
+</VirtualHost>' > /etc/apache2/sites-available/000-default.conf
 
 # 권한 설정
 RUN chown -R www-data:www-data /var/www/html
 
-# Apache 설정
-RUN a2enmod rewrite
-
-# 작업 디렉토리 설정
-WORKDIR /var/www/html
+EXPOSE 80

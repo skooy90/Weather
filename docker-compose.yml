@@ -1,58 +1,51 @@
 version: '3.8'
 
 services:
-  web:
-    build: .
-    ports:
-      - "3000:80"
-    volumes:
-      - .:/var/www/html
-    depends_on:
-      - db
-      - api
-    environment:
-      - MYSQL_HOST=db
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=root
-      - MYSQL_DATABASE=weather_db
-
-  api:
+  frontend:
     build:
-      context: .
+      context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
     environment:
-      - MONGODB_HOST=mongodb
-      - MONGODB_PORT=27017
-      - MONGODB_DATABASE=shop
-      - MONGODB_USERNAME=admin
-      - MONGODB_PASSWORD=password
-      - API_KEY=your_api_key
-      - ALLOWED_ORIGINS=http://localhost:3000
+      - NODE_ENV=development
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
     depends_on:
       - mongodb
-
-  db:
-    image: mysql:8.0
-    ports:
-      - "3306:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=weather_db
-    volumes:
-      - mysql_data:/var/lib/mysql
+      - NODE_ENV=development
+      - MONGODB_URI=mongodb://mongodb:27017/shop
+      - PORT=8000
 
   mongodb:
-    image: mongo:4.4
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=password
-    volumes:
-      - mongodb_data:/data/db
+    image: mongo:latest
     ports:
       - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  swagger:
+    image: swaggerapi/swagger-ui
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./swagger:/swagger
+    environment:
+      - SWAGGER_JSON=/swagger/swagger.json
 
 volumes:
-  mysql_data:
   mongodb_data: 

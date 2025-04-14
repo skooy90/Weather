@@ -1,6 +1,8 @@
 1. dns주소 구매 (가비아)
-2. dns주소 등록(Netlify)
-3. db서버 (MongDB)
-4. 서버 (Render) + 백엔드(php)
+2. dns주소 등록(Netlify = https://kysong.store/) 등록록
+3. db서버 (MongDB = mongodb+srv://skooy90:dbhana951201@skyman.r0gqkcz.mongodb.net/?retryWrites=true&w=majority&appName=SkyMan )
+4. 서버 (Render = https://github.com/skooy90/Weather.git) 
+5. 백엔드(php)으로 구성 예정
+쇼핑몰 페이지를 만들거야
 
 
