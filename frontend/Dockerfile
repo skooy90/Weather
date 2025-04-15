@@ -10,12 +10,14 @@ COPY . .
 
 RUN npm run build
 
-FROM node:18-alpine
+FROM httpd:2.4-alpine
 
-WORKDIR /app
+RUN mkdir -p /usr/local/apache2/htdocs/src/public
 
-COPY --from=build /app/build /var/www/html
+COPY --from=build /app/build/* /usr/local/apache2/htdocs/src/public/
 
-EXPOSE 3000
+COPY httpd.conf /usr/local/apache2/conf/httpd.conf
 
-CMD ["npx", "serve", "-s", "/var/www/html", "-l", "3000"] 
+EXPOSE 80
+
+CMD ["httpd-foreground"] 

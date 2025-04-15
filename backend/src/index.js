@@ -11,7 +11,7 @@ const app = express();
 
 // CORS 설정
 const corsOptions = {
-  origin: 'http://localhost:3000',
+  origin: 'http://localhost:80',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
@@ -34,7 +34,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: 'http://localhost:5000',
+        url: 'http://localhost:8000',
         description: '개발 서버'
       }
     ]
@@ -65,7 +65,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: '서버 에러가 발생했습니다.' });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`서버가 포트 ${PORT}에서 실행 중입니다.`);
 }); 
