@@ -12,9 +12,9 @@ RUN npm run build
 
 FROM httpd:2.4-alpine
 
-RUN mkdir -p /var/www/html/src/public
+RUN mkdir -p /opt/render/project/src
 
-COPY --from=build /app/build/* /var/www/html/src/public/
+COPY --from=build /app/build/* /opt/render/project/src/
 
 COPY httpd.conf /usr/local/apache2/conf/httpd.conf
 

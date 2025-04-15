@@ -43,8 +43,8 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: 'http://localhost:8000',
-        description: '개발 서버'
+        url: process.env.SWAGGER_URL || 'http://localhost:8000',
+        description: '서버'
       }
     ]
   },
@@ -55,7 +55,7 @@ const swaggerDocs = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // MongoDB 연결
-mongoose.connect('mongodb://mongodb:27017/weather', {
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://mongodb:27017/weather', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })

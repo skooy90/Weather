@@ -8,8 +8,8 @@ services:
     ports:
       - "10000:10000"
     volumes:
-      - ./frontend:/var/www/html/src/public
-      - /var/www/html/src/public/node_modules
+      - ./frontend:/opt/render/project/src
+      - /opt/render/project/src/node_modules
     depends_on:
       - backend
 
