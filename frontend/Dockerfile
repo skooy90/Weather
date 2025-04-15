@@ -12,6 +12,9 @@ RUN npm run build
 
 FROM httpd:2.4-alpine
 
+# 필요한 모듈 설치
+RUN apk add --no-cache apache2-mod-rewrite
+
 # 기본 경로 생성
 RUN mkdir -p /var/www/html/frontend/src/pages
 
@@ -27,6 +30,9 @@ RUN sed -i 's/Listen 80/Listen 10000/g' /usr/local/apache2/conf/httpd.conf
 # DocumentRoot 설정
 RUN sed -i 's#^DocumentRoot.*#DocumentRoot "/var/www/html/frontend/src/pages"#' /usr/local/apache2/conf/httpd.conf
 RUN sed -i 's#<Directory "/usr/local/apache2/htdocs">#<Directory "/var/www/html/frontend/src/pages">#' /usr/local/apache2/conf/httpd.conf
+
+# mod_rewrite 활성화
+RUN sed -i 's/#LoadModule rewrite_module/LoadModule rewrite_module/' /usr/local/apache2/conf/httpd.conf
 
 EXPOSE 10000
 
