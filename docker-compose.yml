@@ -8,12 +8,10 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      - ./frontend:/var/www/html/src/public
+      - /var/www/html/src/public/node_modules
     depends_on:
       - backend
-    environment:
-      - NODE_ENV=development
 
   backend:
     build:
@@ -26,10 +24,6 @@ services:
       - /app/node_modules
     depends_on:
       - mongodb
-    environment:
-      - NODE_ENV=development
-      - MONGODB_URI=mongodb://mongodb:27017/shop
-      - PORT=8000
 
   mongodb:
     image: mongo:latest

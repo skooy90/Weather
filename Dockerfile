@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y \
     unzip
 
 # 프로젝트 파일 복사
-COPY . /var/www/html/
+COPY . /var/www/html/src/public/
 
 # Apache 설정
 RUN echo '<VirtualHost *:80>\n\
@@ -24,6 +24,6 @@ RUN echo '<VirtualHost *:80>\n\
 </VirtualHost>' > /etc/apache2/sites-available/000-default.conf
 
 # 권한 설정
-RUN chown -R www-data:www-data /var/www/html
+RUN chown -R www-data:www-data /var/www/html/src/public
 
 EXPOSE 80
