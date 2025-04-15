@@ -18,6 +18,8 @@ COPY --from=build /app/build/* /var/www/html/src/public/
 
 COPY httpd.conf /usr/local/apache2/conf/httpd.conf
 
-EXPOSE 80
+RUN sed -i 's/Listen 80/Listen 10000/g' /usr/local/apache2/conf/httpd.conf
+
+EXPOSE 10000
 
 CMD ["httpd-foreground"] 

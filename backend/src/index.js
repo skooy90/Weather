@@ -6,12 +6,21 @@ const swaggerUi = require('swagger-ui-express');
 require('dotenv').config();
 const productRoutes = require('./routes/productRoutes');
 const productDetailRoutes = require('./routes/productDetailRoutes');
+const cartRoutes = require('./routes/cartRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 
+// 서버 타임아웃 설정
+app.server = app.listen(process.env.PORT || 8000, '0.0.0.0', () => {
+  console.log(`Server is running on port ${process.env.PORT || 8000}`);
+});
+app.server.keepAliveTimeout = 120000; // 2분
+app.server.headersTimeout = 120000;   // 2분
+
 // CORS 설정
 const corsOptions = {
-  origin: 'http://localhost:80',
+  origin: process.env.CORS_ORIGIN || 'http://localhost:80',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
@@ -56,16 +65,11 @@ mongoose.connect('mongodb://mongodb:27017/weather', {
 // 라우트 설정
 app.use('/api/products', productRoutes);
 app.use('/api/product-details', productDetailRoutes);
-app.use('/api/cart', require('./routes/cartRoutes'));
-app.use('/api/users', require('./routes/userRoutes'));
+app.use('/api/cart', cartRoutes);
+app.use('/api/users', userRoutes);
 
 // 에러 핸들링 미들웨어
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: '서버 에러가 발생했습니다.' });
-});
-
-const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => {
-  console.log(`서버가 포트 ${PORT}에서 실행 중입니다.`);
 }); 

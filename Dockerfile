@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
 COPY . /var/www/html/src/public/
 
 # Apache 설정
-RUN echo '<VirtualHost *:80>\n\
+RUN echo '<VirtualHost *:10000>\n\
     ServerAdmin webmaster@localhost\n\
     DocumentRoot /var/www/html/src/public\n\
     <Directory /var/www/html/src/public>\n\
@@ -23,7 +23,10 @@ RUN echo '<VirtualHost *:80>\n\
     CustomLog ${APACHE_LOG_DIR}/access.log combined\n\
 </VirtualHost>' > /etc/apache2/sites-available/000-default.conf
 
+# 포트 설정 변경
+RUN sed -i 's/Listen 80/Listen 10000/g' /etc/apache2/ports.conf
+
 # 권한 설정
 RUN chown -R www-data:www-data /var/www/html/src/public
 
-EXPOSE 80
+EXPOSE 10000

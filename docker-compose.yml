@@ -6,7 +6,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "80:80"
+      - "10000:10000"
     volumes:
       - ./frontend:/var/www/html/src/public
       - /var/www/html/src/public/node_modules
