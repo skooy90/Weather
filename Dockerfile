@@ -8,13 +8,13 @@ RUN apt-get update && apt-get install -y \
     unzip
 
 # 프로젝트 파일 복사
-COPY . /opt/render/project/src/
+COPY . /var/www/html/frontend/src/pages/
 
 # Apache 설정
 RUN echo '<VirtualHost *:10000>\n\
     ServerAdmin webmaster@localhost\n\
-    DocumentRoot /opt/render/project/src\n\
-    <Directory /opt/render/project/src>\n\
+    DocumentRoot /var/www/html/frontend/src/pages\n\
+    <Directory /var/www/html/frontend/src/pages>\n\
         Options Indexes FollowSymLinks\n\
         AllowOverride All\n\
         Require all granted\n\
@@ -27,6 +27,6 @@ RUN echo '<VirtualHost *:10000>\n\
 RUN sed -i 's/Listen 80/Listen 10000/g' /etc/apache2/ports.conf
 
 # 권한 설정
-RUN chown -R www-data:www-data /opt/render/project/src
+RUN chown -R www-data:www-data /var/www/html/frontend/src/pages
 
 EXPOSE 10000
