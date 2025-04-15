@@ -11,12 +11,9 @@ const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 
-// 서버 타임아웃 설정
-app.server = app.listen(process.env.PORT || 8000, '0.0.0.0', () => {
-  console.log(`Server is running on port ${process.env.PORT || 8000}`);
-});
-app.server.keepAliveTimeout = 120000; // 2분
-app.server.headersTimeout = 120000;   // 2분
+// 미들웨어 설정
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // CORS 설정
 const corsOptions = {
@@ -27,10 +24,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
-// 미들웨어 설정
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 // Swagger 설정
 const swaggerOptions = {
@@ -54,14 +47,6 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-// MongoDB 연결
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://mongodb:27017/weather', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log('MongoDB 연결 성공'))
-.catch(err => console.error('MongoDB 연결 실패:', err));
-
 // 라우트 설정
 app.use('/api/products', productRoutes);
 app.use('/api/product-details', productDetailRoutes);
@@ -72,4 +57,26 @@ app.use('/api/users', userRoutes);
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: '서버 에러가 발생했습니다.' });
-}); 
+});
+
+// MongoDB 연결 및 서버 시작
+const PORT = process.env.PORT || 10000;
+
+const startServer = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://mongodb:27017/weather', {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
+    console.log('MongoDB 연결 성공');
+    
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`서버가 포트 ${PORT}에서 실행 중입니다.`);
+    });
+  } catch (error) {
+    console.error('MongoDB 연결 실패:', error);
+    process.exit(1);
+  }
+};
+
+startServer(); 
