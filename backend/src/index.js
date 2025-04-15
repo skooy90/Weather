@@ -64,17 +64,36 @@ const PORT = process.env.PORT || 10000;
 
 const startServer = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://mongodb:27017/weather', {
+    if (!process.env.MONGODB_URI) {
+      throw new Error('MONGODB_URI 환경 변수가 설정되지 않았습니다.');
+    }
+
+    await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
+      retryWrites: true,
+      w: 'majority'
     });
+    
     console.log('MongoDB 연결 성공');
     
-    app.listen(PORT, '0.0.0.0', () => {
+    const server = app.listen(PORT, '0.0.0.0', () => {
       console.log(`서버가 포트 ${PORT}에서 실행 중입니다.`);
     });
+
+    // Graceful shutdown
+    process.on('SIGTERM', () => {
+      console.log('SIGTERM 신호를 받았습니다. 서버를 종료합니다.');
+      server.close(() => {
+        mongoose.connection.close(false, () => {
+          console.log('MongoDB 연결을 종료했습니다.');
+          process.exit(0);
+        });
+      });
+    });
+
   } catch (error) {
-    console.error('MongoDB 연결 실패:', error);
+    console.error('MongoDB 연결 실패:', error.message);
     process.exit(1);
   }
 };
