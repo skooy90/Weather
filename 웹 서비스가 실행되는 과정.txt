@@ -1,1 +1,49 @@
 Render 서버에 등록을 하면 도커에서 프로세스가 작동이 되어 index.html이 인텍트하여 frontend/src/pages/Home.js를 내용을 불러와 서버 메인화면에 보이게 할 것입니다.
+
+1. 파일 경로 수정
+   - DocumentRoot를 /var/www/html/frontend/build로 변경
+   - 빌드된 React 파일이 올바른 위치에 복사되도록 수정
+   - 빌드된 파일들이 build 디렉토리에 생성되어 서빙됨
+
+2. Apache 설정 통합
+   - 000-default.conf와 httpd-vhosts.conf의 중복 설정 제거
+   - httpd.conf의 DocumentRoot 설정과 일치하도록 수정
+   - 모든 설정 파일에서 build 디렉토리를 사용하도록 통일
+
+3. 모듈 활성화
+   - rewrite 모듈 활성화 확인
+   - 필요한 Apache 모듈들 자동 활성화 설정 추가
+   - React Router 작동을 위한 rewrite 규칙 설정
+
+4. 권한 설정
+   - 파일 소유권을 www-data로 변경
+   - 디렉토리 및 파일 권한을 755로 설정
+   - build 디렉토리에 대한 접근 권한 설정
+
+5. 포트 설정
+   - 포트 10000이 방화벽에서 열려있는지 확인
+   - 포트 충돌 방지를 위한 설정 추가
+   - Apache가 10000 포트에서 리스닝하도록 설정
+
+6. 서비스 실행
+   - Apache 서버 시작
+   - 포트 10000에서 웹 서비스 실행
+   - 로그 모니터링 설정
+   - 빌드된 React 파일들이 정상적으로 서빙되는지 확인
+
+
+   그로인한 서버에서의 작동 과정
+   작동 과정:
+브라우저가 서버에 접속하면 먼저 index.html을 요청합니다
+index.html이 로드되면 React JavaScript 파일을 다운로드합니다
+React가 div id="root"에 애플리케이션을 마운트합니다
+Home.js의 내용이 이 div 안에 렌더링됩니다
+React Router와의 관계:
+index.html은 모든 라우트의 진입점입니다
+React Router가 URL에 따라 다른 컴포넌트를 렌더링합니다
+Apache의 rewrite 규칙이 모든 요청을 index.html로 리다이렉트합니다
+빌드 과정:
+npm run build 명령어가 실행되면
+React 코드가 최적화되어 build 폴더에 생성됩니다
+이 파일들이 /var/www/html/frontend/src/pages/에 복사됩니다
+즉, index.html은 React 애플리케이션의 시작점이자 컨테이너 역할을 하며, 모든 React 컴포넌트들이 이 파일을 통해 렌더링됩니다.
