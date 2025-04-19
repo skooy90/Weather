@@ -1,8 +1,10 @@
-1. DNS 설정 추후작업
+1. DNS 설정 (진행 중)
    - 도메인: kysong.store (가비아)
-   - 프론트엔드: https://kysong.store
-   - 백엔드: https://api.kysong.store
-1번은 무시하기기
+   - 프론트엔드: https://weather-of7u.onrender.com
+   - 백엔드: https://weather-backend-knii.onrender.com
+   - 추후 도메인 연결 예정:
+     * 프론트엔드: https://kysong.store
+     * 백엔드: https://api.kysong.store
 
 2. 데이터베이스 설정 (완료)
    - MongoDB Atlas 사용
@@ -11,14 +13,17 @@
      * IP 화이트리스트 설정
      * 데이터베이스 사용자 권한 설정
      * 자동 백업 설정
-   - 연결 문자열은 환경 변수로 관리
+   - 연결 문자열은 환경 변수로 관리 (MONGODB_URI)
 
 3. 서버 구성 (완료)
-   - Render 플랫폼 사용 준비
+   - Render 플랫폼 사용
    - GitHub 저장소: https://github.com/skooy90/Weather.git
-   - 프론트엔드: Node.js + React
+   - 프론트엔드: Node.js + React (Vite)
    - 백엔드: Node.js + Express
-   - 리소스 제한 확인 및 모니터링
+   - Docker 컨테이너화 완료:
+     * 프론트엔드: frontend/Dockerfile
+     * 백엔드: backend/Dockerfile
+     * 각각 독립적인 docker-compose.yml 구성
 
 4. 프론트엔드 구조 (완료)
    - React 기반 SPA
@@ -26,249 +31,105 @@
      * 메인 페이지 (/)
      * 로그인 페이지 (/login)
      * 회원가입 페이지 (/register)
-   - 디렉토리 구조:
-     * /var/www/html/frontend/src/pages
-     * /var/www/html/frontend/src/components
-     * /var/www/html/frontend/src/public
-   - 캐싱 전략:
-     * 정적 파일 CDN 사용
-     * 브라우저 캐싱 설정
-     * API 응답 캐싱
+   - Docker 설정:
+     * nginx 웹 서버 사용
+     * 80 포트 노출
+     * 환경 변수:
+       - NODE_ENV=production
+       - VITE_API_URL=https://weather-backend-knii.onrender.com/api
+       - VITE_ENV=production
 
 5. 백엔드 구조 (완료)
    - Express 서버
    - API 엔드포인트:
      * /api/auth (인증 관련)
      * /api/weather (날씨 데이터)
+     * /api/products (제품 관련)
+     * /api/cart (장바구니)
    - 환경 변수:
-     * MONGODB_URI (보안)
-     * CORS_ORIGIN=https://kysong.store
-     * JWT_SECRET (보안)
+     * MONGODB_URI (MongoDB 연결)
+     * CORS_ORIGIN (CORS 설정)
+     * NODE_ENV (환경 설정)
+     * PORT (서버 포트)
+     * JWT_SECRET (인증)
    - 보안 모듈:
      * helmet (HTTP 헤더 보안)
      * cors (CORS 설정)
-   - 에러 처리:
-     * 글로벌 에러 핸들러
-     * MongoDB 연결 재시도 로직
-     * 요청 유효성 검사
+     * express-rate-limit (요청 제한)
+   - Docker 설정:
+     * Node.js 18 Alpine 기반
+     * 3000 포트 내부 노출
+     * 환경 변수 설정 완료
 
 6. 배포 설정 (완료)
-   - Docker 컨테이너 구성
-   - 프론트엔드: Apache 웹 서버
+   - Docker 컨테이너 구성 완료
+   - 프론트엔드: nginx 웹 서버
    - 백엔드: Node.js 서버
    - 보안 설정:
      * SSL/TLS 적용
-     * 헤더 보안 설정
-     * 요청 제한 설정
+     * 헤더 보안 설정 (helmet)
+     * 요청 제한 설정 (rate-limit)
+     * JWT 인증 구현
 
 7. 보안 설정 (완료)
-   - CORS 설정
-   - 환경 변수 관리
-   - API 엔드포인트 보호
-   - 인증/인가 시스템
-   - 데이터 암호화
-   - 로깅 및 모니터링
+   - CORS 설정 완료
+   - 환경 변수 관리:
+     * 프론트엔드 환경 변수
+     * 백엔드 환경 변수
+     * MongoDB 접속 정보
+   - API 엔드포인트 보호:
+     * JWT 기반 인증
+     * rate-limit 적용
+   - 데이터 암호화:
+     * JWT 토큰 암호화
+     * 비밀번호 해싱
 
-8. 개발 및 테스트 (완료)
-   - 로컬 개발 환경 설정
-   - API 테스트 (Swagger)
-   - 프론트엔드 테스트
-   - 배포 전 테스트
-   - 부하 테스트
-   - 보안 테스트
+8. 개발 및 테스트 (진행 중)
+   - 로컬 개발 환경 설정 완료
+   - API 테스트 (Swagger) 구현
+   - 프론트엔드 테스트 진행 중
+   - 배포 전 테스트 필요
+   - 부하 테스트 예정
+   - 보안 테스트 예정
 
-9. 모니터링 및 유지보수 (진행 중)
-   - 로그 관리
-   - 에러 처리
-   - 성능 모니터링
-   - 정기적인 업데이트
-   - 백업 및 복구 계획
-   - 장애 대응 계획
+9. Render 서버 설정 (완료)
+   프론트엔드:
+   - Build Command: cd frontend && npm install && npm run build
+   - Publish Directory: frontend/dist
+   - Environment Variables 설정
+   - Docker 설정 완료
 
-10. Render 서버 배포 과정 (진행 중)
-    - 도메인 설정 (가비아):
-      1. 가비아 DNS 관리 페이지 접속
-      2. A 레코드 추가:
-         * 호스트: @
-         * 값: Render 프론트엔드 IP
-      3. CNAME 레코드 추가:
-         * 호스트: api
-         * 값: Render 백엔드 도메인
-      4. SSL 인증서 적용 확인
-      5. DNS 전파 확인 (최대 24시간 소요)
+   백엔드:
+   - Build Command: cd backend && npm install
+   - Start Command: cd backend && npm start
+   - Environment Variables 설정
+   - Docker 설정 완료
 
-    - 프론트엔드 환경 변수 수정 (완료):
-      1. Render 대시보드 접속 (https://dashboard.render.com) ✅
-      2. "Weather" 서비스 선택 ✅
-      3. 좌측 메뉴에서 "Environment" 클릭 ✅
-      4. 환경 변수 수정 (완료):
-         * REACT_APP_API_URL: https://weather-backend-knii.onrender.com/api ✅
-         * REACT_APP_ENV: production ✅
-         * REACT_APP_CACHE_TIME: 3600 ✅
-         * REACT_APP_LOG_LEVEL: info ✅
-         * REACT_APP_ENABLE_AUTH: true ✅
-         * REACT_APP_ENABLE_CART: true ✅
-         * REACT_APP_SITE_NAME: KYSong Store ✅
-         * REACT_APP_CONTACT_EMAIL: support@kysong.store ✅
-      5. "Save Changes" 클릭 ✅
-      6. 서비스 재시작:
-         * "Manual Deploy" 섹션에서 "Clear build cache & Deploy" 선택
-         * "Deploy latest commit" 클릭
-      7. 배포 완료 후 확인:
-         * 빌드 로그 확인
-         * 웹페이지 확인 방법:
-           1. https://weather-of7u.onrender.com 접속
-           2. 개발자 도구(F12) 열기
-           3. Console 탭에서 환경 변수 확인
-           4. Network 탭에서 API 요청 확인
-           5. Application 탭에서 Local Storage 확인
+10. 모니터링 및 유지보수 (예정)
+    - 로그 관리 구현 예정
+    - 에러 처리 구현
+    - 성능 모니터링 예정
+    - 정기적인 업데이트 계획
+    - 백업 및 복구 계획 수립 필요
 
-    - 백엔드 환경 변수 수정 (완료):
-      1. Render 대시보드 접속 (https://dashboard.render.com) ✅
-      2. "weather-backend" 서비스 선택 ✅
-      3. 좌측 메뉴에서 "Environment" 클릭 ✅
-      4. 환경 변수 수정 (완료):
-         * PORT=10000 ✅
-         * NODE_ENV=production ✅
-         * MONGODB_URI=your_mongodb_uri ✅
-         * CORS_ORIGIN=https://weather-of7u.onrender.com ✅
-      5. "Save Changes" 클릭 ✅
-      6. 서비스 재시작:
-         * "Manual Deploy" 섹션에서 "Clear build cache & Deploy" 선택
-         * "Deploy latest commit" 클릭
-      7. 배포 완료 후 확인:
-         * 빌드 로그 확인
-         * API 엔드포인트 확인:
-           1. https://weather-backend-knii.onrender.com/api 접속
-           2. Swagger UI 확인
-           3. API 응답 확인
-
-11. 도메인 연결
-    - 가비아 DNS 설정:
-      1. DNS 관리 페이지 접속
-      2. A 레코드 추가:
-         * 호스트: @
-         * 값: Render 프론트엔드 IP
-      3. CNAME 레코드 추가:
-         * 호스트: api
-         * 값: Render 백엔드 도메인
-      4. SSL 인증서 적용 확인
-      5. DNS 전파 확인
-
-12. 배포 후 모니터링
-    - Render 대시보드에서:
-      1. 서비스 상태 확인
-      2. 로그 모니터링
-      3. 리소스 사용량 확인
-      4. 에러 알림 설정
-      5. 응답 시간 모니터링
-    - MongoDB Atlas에서:
-      1. 연결 상태 확인
-      2. 쿼리 성능 모니터링
-      3. 백업 설정 확인
-      4. 리소스 사용량 확인
-    - 외부 모니터링:
-      1. UptimeRobot 설정
-      2. 성능 모니터링 도구 설정
-      3. 보안 스캔 설정
-
-13. 장애 대응 계획
-    - 서비스 중단 시:
-      1. 자동 재시작 설정
-      2. 백업 서버 준비
-      3. 롤백 절차 준비
-    - 데이터 손실 시:
-      1. 백업 복구 절차
-      2. 데이터 무결성 검사
-    - 보안 침해 시:
-      1. 접근 차단
-      2. 로그 분석
-      3. 취약점 패치
-
-14. 유지보수 계획
-    - 정기적인 업데이트:
-      1. 의존성 패키지 업데이트
-      2. 보안 패치 적용
-      3. 성능 최적화
-    - 백업 전략:
-      1. 데이터베이스 백업
-      2. 코드 백업
-      3. 설정 백업
-    - 문서화:
-      1. API 문서
-      2. 배포 문서
-      3. 문제 해결 가이드
-
+현재 프로젝트 구조:
 Weather/
-├── src/
-│   ├── public/         # 웹 페이지 파일들
-│   ├── api/            # API 엔드포인트
-│   └── config/         # 설정 파일들
-├── Dockerfile          # 웹 서버 이미지 설정
-└── docker-compose.yml  # 개발 환경 설정
+├── frontend/
+│   ├── Dockerfile
+│   ├── docker-compose.yml
+│   └── ...
+├── backend/
+│   ├── Dockerfile
+│   ├── docker-compose.yml
+│   └── ...
+└── ...
 
-프론트엔드: http://localhost:3000
-백엔드: http://localhost:8000
-MongoDB: localhost:27017
-Swagger UI: http://localhost:8080
-다음 단계로 진행하시겠습니까? 예를 들어:
-프론트엔드 React 앱 초기화
-백엔드 Express 서버 설정
-MongoDB 스키마 정의
-API 엔드포인트 구현
-어떤 부분부터 시작하면 좋을지 말씀해 주세요.
+서비스 URL:
+- 프론트엔드: https://weather-of7u.onrender.com
+- 백엔드: https://weather-backend-knii.onrender.com
+- Swagger UI: https://weather-backend-knii.onrender.com/api-docs
 
-PASS  __tests__/components/App.test.js
-  App Component
-    ✓ renders navigation bar (5 ms)
-    ✓ renders footer (2 ms)
-    ✓ renders home page by default (1 ms)
-
-PASS  __tests__/pages/Home.test.js
-  Home Component
-    ✓ renders welcome message (3 ms)
-    ✓ renders product list (4 ms)
-    ✓ renders featured products (2 ms)
-
-Test Suites: 2 passed, 2 total
-Tests:       6 passed, 6 total
-Snapshots:   0 total
-Time:        1.234 s
-Ran all test suites.
-
-1. 백엔드 서버 구축 (진행 중)
-   - Express.js로 RESTful API 구현 (진행 중)
-   - MongoDB 데이터베이스 연결 (진행 중)
-   - Swagger API 문서화 (진행 중)
-   - Docker 컨테이너화 (포트 10000) (진행 중)
-   - 보안 모듈 설정:
-     * helmet 설치 완료
-     * cors 설정 완료
-     * 환경 변수 설정 필요
-
-2. 프론트엔드 개발 (대기 중)
-   - React.js로 SPA 구현
-   - Redux 상태 관리
-   - API 연동
-   - Docker 컨테이너화 (포트 3000)
-
-3. 배포
-   - Docker Compose로 전체 서비스 구성
-   - MongoDB 컨테이너 (포트 27017)
-   - Swagger UI 컨테이너 (포트 8080)
-   - Render 서버에 배포
-
-4. 테스트
-   - 백엔드 API 테스트
-   - 프론트엔드 컴포넌트 테스트
-   - 통합 테스트
-
-5. 추가 기능
-   - 사용자 인증/인가
-   - 실시간 알림
-   - 성능 최적화
-
-11. JWT 인증 구현
+11. JWT 인증 구현 (완료)
     - JWT 유틸리티 파일 생성 (jwt.js)
       - 토큰 생성 함수
       - 토큰 검증 함수
@@ -294,48 +155,74 @@ Ran all test suites.
       - 보안 스키마 정의
       - 엔드포인트 설명 추가
 
-15. 환경 변수 및 Docker 설정 수정 (완료)
-    - 프론트엔드 환경 변수 (.env):
-      * REACT_APP_API_URL: https://weather-backend-knii.onrender.com/api ✅
-      * REACT_APP_ENV: production ✅
-      * REACT_APP_CACHE_TIME: 3600 ✅
-      * REACT_APP_LOG_LEVEL: info ✅
-      * REACT_APP_ENABLE_AUTH: true ✅
-      * REACT_APP_ENABLE_CART: true ✅
-      * REACT_APP_SITE_NAME: KYSong Store ✅
-      * REACT_APP_CONTACT_EMAIL: support@kysong.store ✅
+12. 환경 변수 설정 (완료)
+    프론트엔드 환경 변수:
+    - NODE_ENV=production
+    - VITE_API_URL=https://weather-backend-knii.onrender.com/api
+    - VITE_ENV=production
 
-    - 백엔드 환경 변수 (.env):
-      * PORT: 10000 ✅
-      * NODE_ENV: production ✅
-      * MONGODB_URI: Render 대시보드에서 설정 ✅
-      * CORS_ORIGIN: https://weather-of7u.onrender.com ✅
-      * JWT_SECRET: Render 대시보드에서 설정 ✅
-      * LOG_LEVEL: info ✅
-      * LOG_FILE: logs/app.log ✅
+    백엔드 환경 변수:
+    - PORT=3000
+    - NODE_ENV=production
+    - MONGODB_URI=${MONGODB_ATLAS_URI}
+    - CORS_ORIGIN=https://weather-of7u.onrender.com
+    - JWT_SECRET=${JWT_SECRET}
 
-    - Docker 설정 수정:
-      * Dockerfile:
-        - Node.js 기반 이미지로 변경 ✅
-        - 작업 디렉토리 설정 (/app) ✅
-        - 의존성 설치 및 빌드 설정 ✅
-        - 포트 설정 (10000) ✅
-        - 서버 실행 명령어 설정 ✅
+13. Docker 설정 (완료)
+    프론트엔드 Docker 설정:
+    - Node.js + nginx 기반
+    - 빌드 스테이지:
+      * Node.js로 빌드
+      * nginx로 서빙
+    - 포트: 80
+    - 환경 변수 설정
 
-      * docker-compose.yml:
-        - 프론트엔드 서비스:
-          * 포트: 3000 ✅
-          * 볼륨 마운트: /app ✅
-          * 환경변수: NODE_ENV=development ✅
-        - 백엔드 서비스:
-          * 포트: 10000 ✅
-          * 볼륨 마운트: /app ✅
-          * 환경변수: NODE_ENV=development ✅
-        - MongoDB 서비스:
-          * 포트: 27017 ✅
-          * 볼륨: mongodb_data ✅
-          * 보안 설정 추가 ✅
-        - Swagger UI 서비스:
-          * 포트: 8080 ✅
-          * 볼륨: /swagger ✅
-          * BASE_URL 설정 추가 ✅
+    백엔드 Docker 설정:
+    - Node.js 18 Alpine 기반
+    - 포트: 3000
+    - 환경 변수 설정
+    - 볼륨 마운트 설정
+
+14. 프론트엔드 빌드 이슈 해결 (진행 중)
+    1. 주요 오류:
+       - API_BASE_URL import 오류
+       - 다수의 deprecated 패키지 경고
+    
+    2. 해결 방안:
+       A. API 설정 수정:
+          - config/api.js 파일 수정
+          - API_BASE_URL 올바르게 export
+          - 환경 변수 기반 설정으로 변경
+       
+       B. 패키지 업데이트:
+          - @babel 플러그인 최신 버전으로 업데이트:
+            * plugin-transform-private-methods
+            * plugin-transform-nullish-coalescing-operator
+            * plugin-transform-optional-chaining
+            * plugin-transform-class-properties
+            * plugin-transform-private-property-in-object
+          - workbox 관련 패키지 업데이트
+          - eslint 최신 버전으로 업데이트
+          - 기타 deprecated 패키지 대체:
+            * sourcemap-codec → @jridgewell/sourcemap-codec
+            * rimraf → rimraf@^4.0.0
+            * svgo → svgo@^2.0.0
+    
+    3. 빌드 프로세스 개선:
+       - 환경 변수 확인
+       - 빌드 전 의존성 정리
+       - 캐시 정리 후 재빌드
+       - 테스트 환경에서 빌드 검증
+
+    4. Docker 빌드 스크립트 수정:
+       ```dockerfile
+       # 빌드 전 환경 준비
+       RUN npm cache clean --force
+       RUN npm install
+       
+       # 환경 변수 설정 확인
+       ENV VITE_API_URL=https://weather-backend-knii.onrender.com/api
+       
+       # 빌드 실행
+       RUN npm run build
+       ```
