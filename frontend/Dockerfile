@@ -3,62 +3,44 @@ FROM node:18-alpine as build
 
 WORKDIR /app
 
-# 의존성 설치
+# package.json과 package-lock.json 복사
 COPY package*.json ./
+
+# 의존성 설치
 RUN npm install
 
-# 소스 코드 복사 및 빌드
+# 소스 코드 복사
 COPY . .
+
+# 환경 변수 설정
+ARG VITE_API_URL
+ENV VITE_API_URL=${VITE_API_URL}
+
+# 프로덕션 빌드
 RUN npm run build
 
-# Apache 단계
-FROM httpd:2.4-alpine
+# 실행 단계
+FROM nginx:alpine
 
-# 필요한 모듈 활성화
-RUN sed -i 's/#LoadModule rewrite_module/LoadModule rewrite_module/' /usr/local/apache2/conf/httpd.conf && \
-    sed -i 's/#LoadModule headers_module/LoadModule headers_module/' /usr/local/apache2/conf/httpd.conf
+# nginx 기본 설정 파일 삭제
+RUN rm -rf /etc/nginx/conf.d/*
 
-# Listen 포트 변경
-RUN sed -i 's/Listen 80/Listen 10000/' /usr/local/apache2/conf/httpd.conf
+# 빌드된 파일을 nginx 디렉토리로 복사
+COPY --from=build /app/dist /usr/share/nginx/html
 
-# 디렉토리 생성 및 권한 설정
-RUN mkdir -p /var/www/html/frontend/build && \
-    chown -R www-data:www-data /var/www/html/frontend
+# nginx 설정 파일 복사
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# 빌드된 파일 복사
-COPY --from=build /app/build/ /var/www/html/frontend/build/
+# 보안 헤더 설정
+RUN echo "server_tokens off;" > /etc/nginx/conf.d/security.conf
 
-# VirtualHost 설정
-RUN echo '<VirtualHost *:10000>\n\
-    ServerAdmin webmaster@localhost\n\
-    DocumentRoot "/var/www/html/frontend/build"\n\
-    <Directory "/var/www/html/frontend/build">\n\
-        Options Indexes FollowSymLinks\n\
-        AllowOverride All\n\
-        Require all granted\n\
-        <IfModule mod_rewrite.c>\n\
-            RewriteEngine On\n\
-            RewriteBase /\n\
-            RewriteRule ^index\.html$ - [L]\n\
-            RewriteCond %{REQUEST_FILENAME} !-f\n\
-            RewriteCond %{REQUEST_FILENAME} !-d\n\
-            RewriteRule . /index.html [L]\n\
-        </IfModule>\n\
-    </Directory>\n\
-    ErrorLog /proc/self/fd/2\n\
-    CustomLog /proc/self/fd/1 combined\n\
-</VirtualHost>' > /usr/local/apache2/conf/extra/httpd-vhosts.conf
-
-# VirtualHost 설정 활성화
-RUN sed -i 's/#Include conf\/extra\/httpd-vhosts.conf/Include conf\/extra\/httpd-vhosts.conf/' /usr/local/apache2/conf/httpd.conf
-
-# DocumentRoot 변경
-RUN sed -i 's#^DocumentRoot.*#DocumentRoot "/var/www/html/frontend/build"#' /usr/local/apache2/conf/httpd.conf
+# nginx 로그 디렉토리 생성
+RUN mkdir -p /var/log/nginx
 
 # 권한 설정
-RUN chown -R www-data:www-data /var/www/html/frontend/build && \
-    chmod -R 755 /var/www/html/frontend/build
+RUN chown -R nginx:nginx /usr/share/nginx/html && \
+    chmod -R 755 /usr/share/nginx/html
 
-EXPOSE 10000
+EXPOSE 80
 
-CMD ["httpd-foreground"] 
+CMD ["nginx", "-g", "daemon off;"] 

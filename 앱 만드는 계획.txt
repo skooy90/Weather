@@ -1,7 +1,8 @@
-1. DNS 설정 (완료)
+1. DNS 설정 추후작업
    - 도메인: kysong.store (가비아)
    - 프론트엔드: https://kysong.store
    - 백엔드: https://api.kysong.store
+1번은 무시하기기
 
 2. 데이터베이스 설정 (완료)
    - MongoDB Atlas 사용
