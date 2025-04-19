@@ -34,7 +34,7 @@ app.use(helmet({
             scriptSrc: ["'self'", "'unsafe-inline'"],
             styleSrc: ["'self'", "'unsafe-inline'"],
             imgSrc: ["'self'", "data:", "https:"],
-            connectSrc: ["'self'", "https://weather-backend.onrender.com"],
+            connectSrc: ["'self'", "https://weather-backend-knii.onrender.com"],
         },
     },
     referrerPolicy: { policy: 'same-origin' },
@@ -42,7 +42,7 @@ app.use(helmet({
 }));
 
 app.use(cors({
-    origin: process.env.CORS_ORIGIN || 'https://weather-frontend.onrender.com',
+    origin: process.env.CORS_ORIGIN || 'https://weather-of7u.onrender.com',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
@@ -75,17 +75,42 @@ const swaggerOptions = {
         servers: [
             {
                 url: process.env.NODE_ENV === 'production' 
-                    ? 'https://weather-backend.onrender.com'
+                    ? 'https://weather-backend-knii.onrender.com'
                     : 'http://localhost:8000',
                 description: process.env.NODE_ENV === 'production' ? 'Production server' : 'Development server'
             }
-        ]
+        ],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT'
+                }
+            }
+        },
+        security: [{
+            bearerAuth: []
+        }]
     },
     apis: ['./src/routes/*.js']
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// Swagger UI 설정
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+    explorer: true,
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: "Weather API Documentation",
+    customfavIcon: "/favicon.ico"
+}));
+
+// Swagger JSON 엔드포인트
+app.get('/api-docs/swagger.json', (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(swaggerSpec);
+});
 
 // 라우트 설정
 app.use('/api/auth', require('./routes/auth'));

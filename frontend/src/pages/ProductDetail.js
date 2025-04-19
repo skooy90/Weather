@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { getProductById } from '../utils/api';
 import GreenPaxineStrongDetail from '../components/product-details/GreenPaxineStrongDetail';
 
 function ProductDetail() {
@@ -11,11 +12,7 @@ function ProductDetail() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/products/${id}`);
-        if (!response.ok) {
-          throw new Error('상품을 불러오는데 실패했습니다.');
-        }
-        const data = await response.json();
+        const data = await getProductById(id);
         setProduct(data);
         setLoading(false);
       } catch (err) {

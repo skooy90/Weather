@@ -6,10 +6,12 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "10000:10000"
+      - "3000:3000"
     volumes:
-      - ./frontend:/var/www/html/frontend/src/pages
-      - /var/www/html/frontend/src/pages/node_modules
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
     depends_on:
       - backend
 
@@ -18,10 +20,12 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "10000:10000"
     volumes:
       - ./backend:/app
       - /app/node_modules
+    environment:
+      - NODE_ENV=development
     depends_on:
       - mongodb
 
@@ -31,8 +35,11 @@ services:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
 
-  swagger:
+  swagger-ui:
     image: swaggerapi/swagger-ui
     ports:
       - "8080:8080"
@@ -40,6 +47,7 @@ services:
       - ./swagger:/swagger
     environment:
       - SWAGGER_JSON=/swagger/swagger.json
+      - BASE_URL=/api-docs
 
 volumes:
   mongodb_data: 

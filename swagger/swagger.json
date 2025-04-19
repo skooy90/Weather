@@ -7,52 +7,20 @@
   },
   "servers": [
     {
-      "url": "http://localhost:8000",
-      "description": "Development server"
+      "url": "http://localhost:10000",
+      "description": "Backend Development server"
+    },
+    {
+      "url": "http://localhost:3000",
+      "description": "Frontend Development server"
+    },
+    {
+      "url": "https://weather-backend-knii.onrender.com",
+      "description": "Backend Production server"
+    },
+    {
+      "url": "https://weather-of7u.onrender.com",
+      "description": "Frontend Production server"
     }
-  ],
-  "paths": {
-    "/api/products": {
-      "get": {
-        "summary": "Get all products",
-        "description": "Returns a list of all products",
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Product"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "Product": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "price": {
-            "type": "number"
-          },
-          "description": {
-            "type": "string"
-          }
-        }
-      }
-    }
-  }
+  ]
 } 

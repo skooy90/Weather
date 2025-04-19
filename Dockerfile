@@ -1,32 +1,23 @@
-FROM php:8.2-apache
+# Node.js 기반 이미지 사용
+FROM node:18-alpine
 
-# 필요한 패키지 설치
-RUN apt-get update && apt-get install -y \
-    libssl-dev \
-    pkg-config \
-    git \
-    unzip
+# 작업 디렉토리 설정
+WORKDIR /app
 
-# 프로젝트 파일 복사
-COPY . /var/www/html/frontend/src/pages/
+# package.json과 package-lock.json 복사
+COPY package*.json ./
 
-# Apache 설정
-RUN echo '<VirtualHost *:10000>\n\
-    ServerAdmin webmaster@localhost\n\
-    DocumentRoot /var/www/html/frontend/src/pages\n\
-    <Directory /var/www/html/frontend/src/pages>\n\
-        Options Indexes FollowSymLinks\n\
-        AllowOverride All\n\
-        Require all granted\n\
-    </Directory>\n\
-    ErrorLog ${APACHE_LOG_DIR}/error.log\n\
-    CustomLog ${APACHE_LOG_DIR}/access.log combined\n\
-</VirtualHost>' > /etc/apache2/sites-available/000-default.conf
+# 의존성 설치
+RUN npm install
 
-# 포트 설정 변경
-RUN sed -i 's/Listen 80/Listen 10000/g' /etc/apache2/ports.conf
+# 소스 코드 복사
+COPY . .
 
-# 권한 설정
-RUN chown -R www-data:www-data /var/www/html/frontend/src/pages
+# 빌드 (프론트엔드인 경우)
+RUN npm run build
 
+# 포트 설정
 EXPOSE 10000
+
+# 서버 실행
+CMD ["npm", "start"]

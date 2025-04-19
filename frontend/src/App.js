@@ -6,6 +6,7 @@ import Products from './pages/Products';
 import Cart from './pages/Cart';
 import Footer from './components/Footer';
 import ProductDetail from './pages/ProductDetail';
+import SwaggerUI from './components/SwaggerUI';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/products" element={<Products />} />
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/api-docs" element={<SwaggerUI />} />
         </Routes>
       </main>
       <Footer />

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getProducts } from '../utils/api';
+import { getProducts, getProductsByCategory } from '../utils/api';
 
 function Products() {
   const [products, setProducts] = useState([]);
@@ -12,20 +12,11 @@ function Products() {
     const fetchProducts = async () => {
       try {
         console.log('상품 데이터를 가져오는 중...');
-        const response = await fetch(`http://localhost:8000/api/products${selectedCategory ? `?category=${selectedCategory}` : ''}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
+        const data = selectedCategory 
+          ? await getProductsByCategory(selectedCategory)
+          : await getProducts();
         
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        console.log('API 응답:', response.status, response.statusText);
-        console.log('받은 데이터:', data);
+        console.log('API 응답:', data);
         
         if (Array.isArray(data)) {
           setProducts(data);
