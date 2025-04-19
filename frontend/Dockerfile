@@ -17,6 +17,9 @@ FROM httpd:2.4-alpine
 # mod_rewrite 모듈 활성화
 RUN sed -i 's/#LoadModule rewrite_module/LoadModule rewrite_module/' /usr/local/apache2/conf/httpd.conf
 
+# Listen 포트 변경
+RUN sed -i 's/Listen 80/Listen 10000/' /usr/local/apache2/conf/httpd.conf
+
 # 디렉토리 생성
 RUN mkdir -p /var/www/html/frontend/src/pages
 
@@ -24,17 +27,23 @@ RUN mkdir -p /var/www/html/frontend/src/pages
 COPY --from=build /app/build/ /var/www/html/frontend/src/pages/
 
 # VirtualHost 설정
-RUN echo '<VirtualHost *:80>\n\
+RUN echo '<VirtualHost *:10000>\n\
     ServerAdmin webmaster@localhost\n\
     DocumentRoot "/var/www/html/frontend/src/pages"\n\
     <Directory "/var/www/html/frontend/src/pages">\n\
-        Options -Indexes +FollowSymLinks\n\
+        Options Indexes FollowSymLinks\n\
         AllowOverride All\n\
         Require all granted\n\
         AddType application/javascript .js\n\
         AddType text/javascript .jsx\n\
         AddType text/css .css\n\
+        # 캐싱 설정\n\
+        <FilesMatch "\.(js|css|jpg|jpeg|png|gif|ico)$">\n\
+            Header set Cache-Control "max-age=31536000, public"\n\
+        </FilesMatch>\n\
     </Directory>\n\
+    ErrorLog /proc/self/fd/2\n\
+    CustomLog /proc/self/fd/1 combined\n\
 </VirtualHost>' > /usr/local/apache2/conf/extra/httpd-vhosts.conf
 
 # VirtualHost 설정 활성화
@@ -51,6 +60,6 @@ RewriteCond %{REQUEST_FILENAME} !-f\n\
 RewriteCond %{REQUEST_FILENAME} !-d\n\
 RewriteRule . /index.html [L]' > /var/www/html/frontend/src/pages/.htaccess
 
-EXPOSE 80
+EXPOSE 10000
 
 CMD ["httpd-foreground"] 

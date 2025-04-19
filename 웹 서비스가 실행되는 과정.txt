@@ -1,0 +1,1 @@
+Render 서버에 등록을 하면 도커에서 프로세스가 작동이 되어 index.html이 인텍트하여 frontend/src/pages/Home.js를 내용을 불러와 서버 메인화면에 보이게 할 것입니다.
