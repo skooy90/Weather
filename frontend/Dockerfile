@@ -3,18 +3,21 @@ FROM node:18-alpine as builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
-COPY . .
+COPY public ./public
+COPY src ./src
+COPY vite.config.js ./
+COPY index.html ./
 RUN npm run build
 
 # 프로덕션 스테이지
 FROM nginx:alpine
-ENV PORT=${PORT:-10000}
+ENV PORT=10000
 
 # Nginx 구성 파일 복사
 RUN mkdir -p /etc/nginx/conf.d
 COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
-COPY --from=builder /app/build /usr/share/nginx/html
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 # 권한 설정
 RUN chown -R nginx:nginx /usr/share/nginx/html && \

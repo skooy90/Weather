@@ -35,7 +35,8 @@
     "@babel/plugin-transform-class-properties": "^7.23.3",
     "@babel/plugin-transform-private-property-in-object": "^7.23.4",
     "@jridgewell/sourcemap-codec": "^1.4.15",
-    "rimraf": "^5.0.5"
+    "rimraf": "^5.0.5",
+    "terser": "^5.27.2"
   },
   "eslintConfig": {
     "extends": [

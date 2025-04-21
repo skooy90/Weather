@@ -12,7 +12,7 @@
 FROM node:18-alpine as builder
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 COPY . .
 RUN npm run build
 
@@ -115,4 +115,48 @@ services:
 2. 실제 파일 경로 확인 완료
 3. 환경 변수 사용 여부 확인 완료
 4. Nginx 설정 파일 내용 확인 완료
-5. Dockerfile 경로 수정 완료 
+5. Dockerfile 경로 수정 완료
+
+## 2024-04-21 작업 내용
+
+### 1. Docker 빌드 오류 해결
+- `npm ci` 명령어 오류 해결
+  - `package-lock.json` 파일이 없어서 발생한 오류
+  - `npm install`로 변경하여 해결
+
+### 2. Vite 빌드 설정 수정
+- `vite.config.js` 수정
+  - `base: './'` 추가하여 상대 경로 설정
+  - 빌드 출력 디렉토리 설정 (`outDir: 'dist'`)
+  - 소스맵 활성화 및 최소화 설정
+  - 청크 분할 설정 추가
+
+### 3. 의존성 패키지 추가
+- `package.json` 수정
+  - `terser` 패키지 추가 (빌드 최소화를 위해)
+  - 버전: ^5.27.2
+
+### 4. Dockerfile 최적화
+- 빌드 스테이지 개선
+  - 파일 복사 순서 최적화
+  - 필요한 파일만 명시적으로 복사
+  - 권한 설정 추가
+- 프로덕션 스테이지 개선
+  - Nginx 설정 파일 복사 경로 수정
+  - 환경 변수 설정 추가
+  - 권한 설정 추가
+
+### 5. 빌드 및 실행 테스트
+- Docker 이미지 빌드 성공
+- 컨테이너 실행 테스트 완료
+- 포트 10000에서 정상 동작 확인
+
+### 6. Render 배포 준비
+- Build Command: `docker build -t weather-frontend .`
+- Start Command: `docker run -p $PORT:$PORT weather-frontend`
+
+## 다음 작업 예정
+- Render 서버에 배포
+- 환경 변수 설정
+- 도메인 연결
+- SSL 인증서 설정 
