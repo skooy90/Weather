@@ -113,6 +113,10 @@ app.get('/api-docs/swagger.json', (req, res) => {
 });
 
 // 라우트 설정
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'ok' });
+});
+
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/products', productRoutes);
 app.use('/api/product-details', productDetailRoutes);
