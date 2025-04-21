@@ -250,6 +250,47 @@ services:
   - 빌드 필터: `frontend/**`, `render.yaml`
   - Auto Deploy: 활성화
 
+### 13. 백엔드 연결 설정
+- Nginx 프록시 설정 수정
+  - 기존: `http://backend:3000`
+  - 변경: `https://weather-backend-knii.onrender.com`
+  - 이유: Docker 컨테이너 간 직접 통신이 아닌 실제 백엔드 URL로 변경
+
+- 주의사항
+  - HTTPS 사용 (보안 연결)
+  - CORS 설정 확인 필요
+  - 프록시 헤더 설정 유지
+
+### 14. MongoDB 연결 설정
+- 경고 메시지 해결
+  - `useNewUrlParser`, `useUnifiedTopology` 옵션 관련 경고는 무시 가능
+  - MongoDB 드라이버 4.0 이상에서는 자동 적용
+
+- 환경 변수 설정
+  - `MONGODB_URI`: MongoDB Atlas 연결 문자열
+  - `MONGODB_USERNAME`: MongoDB 사용자 이름
+  - `MONGODB_PASSWORD`: MongoDB 비밀번호
+  - `JWT_SECRET`: JWT 토큰 암호화 키
+
+- render.yaml 수정
+  - 백엔드 서비스 설정 추가
+  - MongoDB 환경 변수 설정
+  - CORS 설정
+  - 로깅 레벨 설정
+
+### 15. 환경 변수 추가 설정
+- `NODE_ENV` 환경 변수
+  - 프론트엔드와 백엔드 모두 `production` 으로 설정
+  - 프로덕션 환경에서의 최적화된 동작을 위해 필요
+  - 빌드 프로세스와 런타임 동작에 영향
+  - Vite와 React의 최적화 기능 활성화
+
+- 주요 영향
+  - 개발 도구 비활성화
+  - 에러 메시지 최소화
+  - 성능 최적화 활성화
+  - 캐싱 전략 최적화
+
 ## 다음 작업 예정
 - Render 서버에 배포
 - 환경 변수 설정
