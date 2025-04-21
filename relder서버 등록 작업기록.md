@@ -291,6 +291,26 @@ services:
   - 성능 최적화 활성화
   - 캐싱 전략 최적화
 
+### 16. 백엔드 Render 설정 파일 추가
+- `backend/render.yaml` 파일 생성
+  - 서비스 이름: `weather-backend`
+  - Docker 환경 설정
+  - 환경 변수 설정:
+    - `NODE_ENV=production`
+    - `PORT=3000`
+    - MongoDB 연결 정보
+    - JWT 설정
+    - CORS 설정
+    - 로깅 레벨
+
+- 빌드 필터 설정
+  - 모든 파일 변경 감지
+  - 자동 배포 활성화
+
+- 헬스 체크 설정
+  - 경로: `/health`
+  - 상태 모니터링
+
 ## 다음 작업 예정
 - Render 서버에 배포
 - 환경 변수 설정
