@@ -11,7 +11,6 @@ RUN npm run build
 
 # 프로덕션 스테이지
 FROM nginx:alpine
-ENV PORT=10000
 
 # Nginx 구성 파일 복사
 RUN mkdir -p /etc/nginx/conf.d
@@ -33,6 +32,6 @@ RUN chown -R nginx:nginx /usr/share/nginx/html && \
 
 USER nginx
 
-EXPOSE ${PORT}
+EXPOSE 10000
 
 CMD ["nginx", "-g", "daemon off;"] 

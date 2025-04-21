@@ -3,7 +3,11 @@ services:
     name: weather-frontend
     env: docker
     dockerfilePath: ./frontend/Dockerfile
-    dockerCommand: nginx -g "daemon off;"
+    buildFilter:
+      paths:
+        - frontend/**
+        - render.yaml
+    healthCheckPath: /healthz
     envVars:
       - key: PORT
         value: 10000
@@ -23,5 +27,4 @@ services:
         value: KYSong Store
       - key: VITE_CONTACT_EMAIL
         value: support@kysong.store
-    healthCheckPath: /
     autoDeploy: true 

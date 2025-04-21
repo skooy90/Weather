@@ -155,6 +155,101 @@ services:
 - Build Command: `docker build -t weather-frontend .`
 - Start Command: `docker run -p $PORT:$PORT weather-frontend`
 
+## 2024-04-21 추가 작업 내용
+
+### 7. Nginx 설정 수정
+- `nginx.conf` 수정
+  - `user nginx;` 지시문 제거 (경고 해결)
+  - worker_processes 설정 최적화
+
+- `default.conf` 수정
+  - 포트 설정을 정적 값으로 변경 (`listen 10000;`)
+  - 환경 변수 처리 방식 개선
+
+- `Dockerfile` 수정
+  - PORT 환경 변수 제거
+  - EXPOSE 포트를 정적 값으로 변경
+  - 권한 설정 최적화
+
+### 8. Render 배포 설정 수정
+- `render.yaml` 수정
+  - `dockerCommand` 변경: `docker run -p $PORT:10000 weather-frontend`
+  - 기존 `nginx -g "daemon off;"` 명령어 제거
+  - 환경 변수 설정 유지
+
+## 2024-04-21 추가 작업 내용 2
+
+### 9. Render 서비스 설정 상세
+- Docker 설정
+  - Dockerfile Path: `/frontend/Dockerfile`
+  - Build Context Directory: `/frontend`
+  - Docker Command 제거 (Dockerfile의 CMD 사용)
+
+- 빌드 필터 설정
+  - Included Paths:
+    - `/frontend/*`
+    - `/render.yaml`
+  - 프론트엔드 관련 파일 변경시에만 자동 배포되도록 설정
+
+- Health Check 설정
+  - Path: `/healthz` 추가
+  - Nginx 설정 수정 필요
+
+### 10. Nginx 설정 추가
+```nginx
+# default.conf에 추가
+location /healthz {
+    access_log off;
+    add_header Content-Type text/plain;
+    return 200 'OK';
+}
+```
+
+### 11. render.yaml 업데이트
+```yaml
+services:
+  - type: web
+    name: weather-frontend
+    env: docker
+    dockerfilePath: ./frontend/Dockerfile
+    buildFilter:
+      paths:
+        - frontend/**
+        - render.yaml
+    healthCheckPath: /healthz
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: VITE_API_URL
+        value: https://weather-backend-knii.onrender.com/api
+      - key: VITE_ENV
+        value: production
+      - key: VITE_CACHE_TIME
+        value: 3600
+      - key: VITE_LOG_LEVEL
+        value: info
+      - key: VITE_ENABLE_AUTH
+        value: true
+      - key: VITE_ENABLE_CART
+        value: true
+      - key: VITE_SITE_NAME
+        value: KYSong Store
+      - key: VITE_CONTACT_EMAIL
+        value: support@kysong.store
+```
+
+### 12. Render 웹 인터페이스 설정
+- 수동 설정 항목
+  - Dockerfile Path: `/frontend/Dockerfile` 입력
+  - Docker Build Context Directory: `/frontend` 입력
+  - Root Directory: 비워두기 (기본값 사용)
+
+- 자동 적용되는 설정 (render.yaml)
+  - 환경 변수들
+  - Health Check 경로: `/healthz`
+  - 빌드 필터: `frontend/**`, `render.yaml`
+  - Auto Deploy: 활성화
+
 ## 다음 작업 예정
 - Render 서버에 배포
 - 환경 변수 설정
