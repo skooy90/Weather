@@ -7,12 +7,30 @@ services:
     ports:
       - "${PORT:-10000}:${PORT:-10000}"
     environment:
+      - PORT=${PORT:-10000}
+      - VITE_API_URL=${VITE_API_URL:-http://localhost:3000/api}
       - NODE_ENV=production
-      - VITE_API_URL=https://weather-backend-knii.onrender.com/api
       - VITE_ENV=production
       - VITE_CACHE_TIME=3600
       - VITE_LOG_LEVEL=info
       - VITE_ENABLE_AUTH=true
       - VITE_ENABLE_CART=true
       - VITE_SITE_NAME=KYSong Store
-      - VITE_CONTACT_EMAIL=support@kysong.store 
+      - VITE_CONTACT_EMAIL=support@kysong.store
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - ./logs:/var/log/nginx
+    depends_on:
+      - backend
+    restart: unless-stopped
+  backend:
+    image: backend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - frontend
+    restart: unless-stopped 
