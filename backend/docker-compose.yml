@@ -8,10 +8,10 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - PORT=3000
       - CORS_ORIGIN=https://weather-of7u.onrender.com
-      - MONGODB_URI=${MONGODB_ATLAS_URI}
+      - MONGODB_URI=${MONGODB_URI}
       - JWT_SECRET=${JWT_SECRET}
+      - LOG_LEVEL=info
     volumes:
       - ./logs:/app/logs
     healthcheck:

@@ -26,6 +26,7 @@ COPY public ./public
 ARG VITE_API_URL
 ENV VITE_API_URL=${VITE_API_URL:-https://weather-backend-knii.onrender.com/api}
 ENV NODE_ENV=production
+ENV PORT=10000
 
 # 빌드 실행
 RUN npm run build
@@ -35,6 +36,15 @@ FROM nginx:alpine
 
 # nginx 기본 설정
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# nginx 설정 템플릿 생성
+RUN echo "daemon off; \n\
+events { \n\
+    worker_connections 1024; \n\
+} \n\
+http { \n\
+    include /etc/nginx/conf.d/*.conf; \n\
+}" > /etc/nginx/nginx.conf
 
 # 보안 설정
 RUN rm -rf /etc/nginx/conf.d/default.conf && \
@@ -48,7 +58,7 @@ RUN chown -R nginx:nginx /usr/share/nginx/html && \
     chmod -R 755 /usr/share/nginx/html
 
 # 포트 설정
-EXPOSE 80
+EXPOSE ${PORT}
 
 # nginx 실행
-CMD ["nginx", "-g", "daemon off;"] 
+CMD ["nginx"] 
