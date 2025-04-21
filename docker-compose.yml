@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: weather-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    environment:
+      - VITE_API_URL=http://localhost:3000/api
+    depends_on:
+      - backend
+    networks:
+      - weather-network
+
+  backend:
+    image: weather-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/weather
+      - JWT_SECRET=8f62b3847d71a3b8382a9e739cffd124f9d76da1c187ad975e7bc6da8f6df8f492c594db1471555555c9c1c785478c6789ae0e69f0c8069e993f6b44f5c0a123
+      - CORS_ORIGIN=http://localhost:80
+      - NODE_ENV=production
+      - PORT=3000
+    depends_on:
+      - mongodb
+    networks:
+      - weather-network
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - weather-network
+
+networks:
+  weather-network:
+    driver: bridge
+
+volumes:
+  mongodb_data: 

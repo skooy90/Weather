@@ -9,10 +9,18 @@ COPY package*.json ./
 
 # 의존성 설치 전 캐시 정리 및 설치
 RUN npm cache clean --force && \
-    npm install
+    npm install && \
+    npm install terser --save-dev
 
-# 소스 코드 복사
-COPY . .
+# Vite 설정 파일 복사
+COPY vite.config.js ./
+
+# index.html을 루트로 복사
+COPY public/index.html ./
+
+# 나머지 소스 코드 복사
+COPY src ./src
+COPY public ./public
 
 # 환경 변수 설정
 ARG VITE_API_URL

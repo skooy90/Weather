@@ -114,7 +114,6 @@ app.get('/api-docs/swagger.json', (req, res) => {
 
 // 라우트 설정
 app.use('/api/auth', require('./routes/auth'));
-app.use('/api/weather', require('./routes/weather'));
 app.use('/api/products', productRoutes);
 app.use('/api/product-details', productDetailRoutes);
 app.use('/api/cart', cartRoutes);
