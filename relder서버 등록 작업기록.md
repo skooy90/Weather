@@ -420,6 +420,23 @@ services:
   - API 엔드포인트 정렬 및 필터링
   - 문서 확장/축소 기능
 
+### 21. MongoDB 연결 설정 업데이트
+- 더 이상 사용되지 않는 옵션 제거
+  - `useNewUrlParser` 제거 (MongoDB 드라이버 4.0.0 이후 불필요)
+  - `useUnifiedTopology` 제거 (MongoDB 드라이버 4.0.0 이후 불필요)
+
+- 수정된 연결 설정
+  ```javascript
+  mongoose.connect(process.env.MONGODB_URI, {
+    serverSelectionTimeoutMS: 5000
+  })
+  ```
+
+- 주요 변경사항
+  - 최신 MongoDB 드라이버 호환성 개선
+  - 불필요한 경고 메시지 제거
+  - 연결 타임아웃 설정 유지
+
 ## 다음 작업 예정
 - Render 서버에 배포
 - 환경 변수 설정

@@ -149,8 +149,6 @@ app.use((err, req, res, next) => {
 // MongoDB 연결
 const connectWithRetry = () => {
     mongoose.connect(process.env.MONGODB_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
         serverSelectionTimeoutMS: 5000
     })
     .then(() => {
