@@ -6,7 +6,7 @@ import Products from './pages/Products';
 import Cart from './pages/Cart';
 import Footer from './components/Footer';
 import ProductDetail from './pages/ProductDetail';
-import SwaggerUI from './components/SwaggerUI';
+import SwaggerUI from './pages/SwaggerUI';
 
 function App() {
   return (

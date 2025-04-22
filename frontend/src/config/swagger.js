@@ -1,6 +1,5 @@
 // Swagger UI 설정
 export const SWAGGER_CONFIG = {
-  url: process.env.REACT_APP_API_URL + '/api-docs/swagger.json',
   dom_id: '#swagger-ui',
   deepLinking: true,
   presets: [
@@ -10,14 +9,17 @@ export const SWAGGER_CONFIG = {
   plugins: [
     SwaggerUIBundle.plugins.DownloadUrl
   ],
-  layout: 'StandaloneLayout',
-  docExpansion: 'none',
-  defaultModelsExpandDepth: -1,
+  layout: "BaseLayout",
+  docExpansion: 'list',
+  defaultModelsExpandDepth: 1,
   defaultModelExpandDepth: 1,
+  defaultModelRendering: 'model',
   displayRequestDuration: true,
   filter: true,
+  operationsSorter: 'alpha',
   showExtensions: true,
   showCommonExtensions: true,
-  supportedSubmitMethods: ['get', 'post', 'put', 'delete', 'patch'],
-  validatorUrl: null
+  tagsSorter: 'alpha',
+  validatorUrl: null,
+  persistAuthorization: true,
 }; 

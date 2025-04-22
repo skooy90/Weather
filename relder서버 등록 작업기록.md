@@ -354,6 +354,72 @@ services:
   - nginx 사용자만 필요한 접근 권한 보유
   - 임시 파일 디렉토리 보안 강화
 
+### 19. Swagger UI 의존성 추가
+- `index.html` 수정
+  - Swagger UI CSS 추가
+  - Swagger UI Bundle 스크립트 추가
+  - Swagger UI Standalone Preset 추가
+  
+- 추가된 의존성
+  ```html
+  <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui.css" />
+  <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-bundle.js"></script>
+  <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-standalone-preset.js"></script>
+  ```
+
+- 주의사항
+  - unpkg CDN 사용
+  - 버전 5.11.0 명시
+  - 순서대로 로드되도록 배치
+
+### 20. Swagger UI 컴포넌트 설정
+- `SwaggerUI.jsx` 컴포넌트 생성
+  ```jsx
+  const SwaggerUI = () => {
+    useEffect(() => {
+      const ui = SwaggerUIBundle({
+        ...SWAGGER_CONFIG,
+        url: 'https://weather-backend-knii.onrender.com/api-docs',
+      });
+    }, []);
+
+    return <div id="swagger-ui" />;
+  };
+  ```
+
+- Swagger 설정 파일 (`swagger.js`)
+  ```javascript
+  export const SWAGGER_CONFIG = {
+    dom_id: '#swagger-ui',
+    deepLinking: true,
+    presets: [
+      SwaggerUIBundle.presets.apis,
+      SwaggerUIStandalonePreset
+    ],
+    layout: "BaseLayout",
+    docExpansion: 'list',
+    defaultModelsExpandDepth: 1,
+    defaultModelExpandDepth: 1,
+    defaultModelRendering: 'model',
+    displayRequestDuration: true,
+    filter: true,
+    operationsSorter: 'alpha',
+    tagsSorter: 'alpha',
+    persistAuthorization: true
+  }
+  ```
+
+- 라우터 설정 (`App.jsx`)
+  - `/api-docs` 경로에 SwaggerUI 컴포넌트 연결
+  - 페이지 컴포넌트로 구현하여 독립적인 라우팅 제공
+
+- 주요 기능
+  - API 문서 자동 로드
+  - 대화형 API 테스트 인터페이스
+  - 인증 상태 유지
+  - API 엔드포인트 정렬 및 필터링
+  - 문서 확장/축소 기능
+
 ## 다음 작업 예정
 - Render 서버에 배포
 - 환경 변수 설정
