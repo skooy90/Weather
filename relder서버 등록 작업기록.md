@@ -32,6 +32,8 @@ RUN chown -R nginx:nginx /usr/share/nginx/html && \
     chown -R nginx:nginx /var/cache/nginx && \
     chown -R nginx:nginx /var/log/nginx && \
     chown -R nginx:nginx /etc/nginx/conf.d && \
+    mkdir -p /var/run && \
+    chown -R nginx:nginx /var/run && \
     touch /var/run/nginx.pid && \
     chown -R nginx:nginx /var/run/nginx.pid && \
     chmod 644 /etc/nginx/nginx.conf && \
@@ -310,6 +312,47 @@ services:
 - 헬스 체크 설정
   - 경로: `/health`
   - 상태 모니터링
+
+### 17. Nginx PID 파일 권한 설정
+- Dockerfile 수정
+  - `/var/run` 디렉토리 생성 및 권한 설정
+  - 디렉토리 소유권을 nginx 사용자로 변경
+  - PID 파일 권한 문제 해결
+
+- 수정된 권한 설정
+  ```dockerfile
+  mkdir -p /var/run && \
+  chown -R nginx:nginx /var/run && \
+  touch /var/run/nginx.pid && \
+  chown -R nginx:nginx /var/run/nginx.pid
+  ```
+
+- 주의사항
+  - 컨테이너 재시작시에도 권한 유지
+  - nginx 프로세스의 PID 파일 접근 보장
+  - 보안상 최소 권한 원칙 준수
+
+### 18. 추가 Nginx 디렉토리 권한 설정
+- 추가된 디렉토리 권한 설정
+  - `/var/tmp/nginx`: 임시 파일 저장소
+  - `/var/lib/nginx`: Nginx 라이브러리 파일
+  - `/tmp`: 시스템 임시 파일
+  
+- 권한 설정 상세
+  ```dockerfile
+  mkdir -p /var/tmp/nginx && \
+  mkdir -p /var/lib/nginx && \
+  chown -R nginx:nginx /var/tmp/nginx && \
+  chown -R nginx:nginx /var/lib/nginx && \
+  chown -R nginx:nginx /tmp && \
+  chmod -R 755 /var/lib/nginx && \
+  chmod -R 755 /var/tmp/nginx
+  ```
+
+- 보안 고려사항
+  - 각 디렉토리별 적절한 권한 수준 설정
+  - nginx 사용자만 필요한 접근 권한 보유
+  - 임시 파일 디렉토리 보안 강화
 
 ## 다음 작업 예정
 - Render 서버에 배포

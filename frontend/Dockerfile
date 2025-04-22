@@ -24,10 +24,19 @@ RUN chown -R nginx:nginx /usr/share/nginx/html && \
     chown -R nginx:nginx /var/cache/nginx && \
     chown -R nginx:nginx /var/log/nginx && \
     chown -R nginx:nginx /etc/nginx/conf.d && \
+    mkdir -p /var/run && \
+    mkdir -p /var/tmp/nginx && \
+    mkdir -p /var/lib/nginx && \
+    chown -R nginx:nginx /var/run && \
+    chown -R nginx:nginx /var/tmp/nginx && \
+    chown -R nginx:nginx /var/lib/nginx && \
+    chown -R nginx:nginx /tmp && \
     touch /var/run/nginx.pid && \
     chown -R nginx:nginx /var/run/nginx.pid && \
     chmod 644 /etc/nginx/nginx.conf && \
     chmod 644 /etc/nginx/conf.d/default.conf && \
+    chmod -R 755 /var/lib/nginx && \
+    chmod -R 755 /var/tmp/nginx && \
     chown -R nginx:nginx /etc/nginx
 
 USER nginx
