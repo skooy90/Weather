@@ -1,18 +1,19 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import styled, { ThemeProvider } from 'styled-components';
-import { AuthProvider } from './context/AuthContext.jsx';
-import { ThemeProvider as CustomThemeProvider } from './context/ThemeContext';
-import ProtectedRoute from './components/ProtectedRoute';
-import Home from './pages/Home';
-import ContentDetail from './pages/ContentDetail';
-import SignUp from './pages/SignUp';
-import Login from './pages/Login';
-import Header from './components/Header/Header';
-import AdminDashboard from './pages/admin/AdminDashboard';
-import UserManagement from './pages/admin/UserManagement';
-import ContentManagement from './pages/admin/ContentManagement';
-import CommentManagement from './pages/admin/CommentManagement';
+const React = require('react');
+const { Routes, Route } = require('react-router-dom');
+const styled = require('styled-components');
+const { ThemeProvider } = require('styled-components');
+const { AuthProvider } = require('./context/AuthContext.jsx');
+const { ThemeProvider: CustomThemeProvider } = require('./context/ThemeContext');
+const ProtectedRoute = require('./components/ProtectedRoute');
+const Home = require('./pages/Home');
+const ContentDetail = require('./pages/ContentDetail');
+const SignUp = require('./pages/SignUp');
+const Login = require('./pages/Login');
+const Header = require('./components/Header/Header');
+const AdminDashboard = require('./pages/admin/AdminDashboard');
+const UserManagement = require('./pages/admin/UserManagement');
+const ContentManagement = require('./pages/admin/ContentManagement');
+const CommentManagement = require('./pages/admin/CommentManagement');
 
 const lightTheme = {
   background: '#f5f5f5',
@@ -104,4 +105,4 @@ function App() {
   );
 }
 
-export default App;
+module.exports = App;

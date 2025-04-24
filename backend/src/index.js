@@ -15,6 +15,8 @@ import cartRoutes from './routes/cartRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import authRoutes from './routes/auth.js';
 import contentRoutes from './routes/contentRoutes.js';
+import config from './config/env';
+import logger from './config/logger';
 
 const app = express();
 
@@ -24,9 +26,7 @@ if (!fs.existsSync(logDir)) {
     fs.mkdirSync(logDir);
 }
 const accessLogStream = fs.createWriteStream(path.join(logDir, 'access.log'), { flags: 'a' });
-app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" :response-time ms', {
-    stream: accessLogStream
-}));
+app.use(morgan('combined', { stream: { write: message => logger.info(message.trim()) } }));
 
 // 보안 미들웨어
 app.use(helmet({
@@ -101,6 +101,11 @@ const swaggerOptions = {
 const specs = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
+// 헬스체크 엔드포인트
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'OK' });
+});
+
 // 라우트 설정
 app.use('/api/products', productRoutes);
 app.use('/api/product-details', productDetailRoutes);
@@ -119,10 +124,10 @@ app.use((req, res) => {
 
 // 에러 처리 미들웨어
 app.use((err, req, res, next) => {
-    console.error(err.stack);
+    logger.error(err.stack);
     
     // 운영 환경별 에러 메시지 처리
-    const error = process.env.NODE_ENV === 'development' 
+    const error = config.env === 'development' 
         ? { message: err.message, stack: err.stack }
         : { message: '서버 에러가 발생했습니다.' };
 
@@ -134,15 +139,15 @@ app.use((err, req, res, next) => {
 
 // MongoDB 연결
 const connectWithRetry = () => {
-    mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/weather_app', {
+    mongoose.connect(config.mongodbUri, {
         useNewUrlParser: true,
         useUnifiedTopology: true
     })
     .then(() => {
-        console.log('MongoDB 연결 성공');
+        logger.info('MongoDB에 연결되었습니다.');
     })
     .catch((err) => {
-        console.error('MongoDB 연결 실패:', err);
+        logger.error('MongoDB 연결 실패:', err);
         setTimeout(connectWithRetry, 5000);
     });
 };
@@ -150,7 +155,7 @@ const connectWithRetry = () => {
 connectWithRetry();
 
 // 서버 시작
-const PORT = process.env.PORT || 3000;
+const PORT = config.port || 3000;
 app.listen(PORT, () => {
-    console.log(`서버가 포트 ${PORT}에서 실행 중입니다.`);
+    logger.info(`서버가 포트 ${PORT}에서 실행 중입니다.`);
 }); 
