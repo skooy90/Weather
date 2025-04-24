@@ -1,25 +1,25 @@
-require('dotenv').config();
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
-const morgan = require('morgan');
-const fs = require('fs');
-const path = require('path');
-const swaggerJsdoc = require('swagger-jsdoc');
-const swaggerUi = require('swagger-ui-express');
-const productRoutes = require('./routes/productRoutes');
-const productDetailRoutes = require('./routes/productDetailRoutes');
-const cartRoutes = require('./routes/cartRoutes');
-const userRoutes = require('./routes/userRoutes');
-const authRoutes = require('./routes/auth');
-const contentRoutes = require('./routes/contentRoutes');
+import 'dotenv/config';
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import morgan from 'morgan';
+import fs from 'fs';
+import path from 'path';
+import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
+import productRoutes from './routes/productRoutes.js';
+import productDetailRoutes from './routes/productDetailRoutes.js';
+import cartRoutes from './routes/cartRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import authRoutes from './routes/auth.js';
+import contentRoutes from './routes/contentRoutes.js';
 
 const app = express();
 
 // 로깅 설정
-const logDir = path.join(__dirname, '../logs');
+const logDir = path.join(process.cwd(), 'logs');
 if (!fs.existsSync(logDir)) {
     fs.mkdirSync(logDir);
 }
@@ -98,32 +98,15 @@ const swaggerOptions = {
     apis: ['./src/routes/*.js']
 };
 
-const swaggerSpec = swaggerJsdoc(swaggerOptions);
-
-// Swagger UI 설정
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
-    explorer: true,
-    customCss: '.swagger-ui .topbar { display: none }',
-    customSiteTitle: "Weather API Documentation",
-    customfavIcon: "/favicon.ico"
-}));
-
-// Swagger JSON 엔드포인트
-app.get('/api-docs/swagger.json', (req, res) => {
-    res.setHeader('Content-Type', 'application/json');
-    res.send(swaggerSpec);
-});
+const specs = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 // 라우트 설정
-app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'ok' });
-});
-
-app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/product-details', productDetailRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/contents', contentRoutes);
 
 // 404 에러 처리
@@ -151,28 +134,23 @@ app.use((err, req, res, next) => {
 
 // MongoDB 연결
 const connectWithRetry = () => {
-    const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/weather_app';
-    
-    console.log('MongoDB 연결 시도:', MONGODB_URI);
-    
-    mongoose.connect(MONGODB_URI, {
+    mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/weather_app', {
         useNewUrlParser: true,
-        useUnifiedTopology: true,
-        serverSelectionTimeoutMS: 5000
+        useUnifiedTopology: true
     })
     .then(() => {
         console.log('MongoDB 연결 성공');
-        // 서버 시작
-        const PORT = process.env.PORT || 5000;
-        app.listen(PORT, () => {
-            console.log(`서버가 ${PORT} 포트에서 실행 중입니다.`);
-        });
     })
-    .catch(err => {
+    .catch((err) => {
         console.error('MongoDB 연결 실패:', err);
-        console.log('5초 후 재연결 시도...');
         setTimeout(connectWithRetry, 5000);
     });
 };
 
-connectWithRetry(); 
+connectWithRetry();
+
+// 서버 시작
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`서버가 포트 ${PORT}에서 실행 중입니다.`);
+}); 
