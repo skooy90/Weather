@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
-const auth = require('../middleware/auth');
+const auth = require('../middleware/userAuth');
 
 /**
  * @swagger
@@ -81,5 +81,8 @@ router.post('/login', authController.login);
  *         description: 사용자 정보 조회 성공
  */
 router.get('/me', auth, authController.getCurrentUser);
+
+// 회원가입
+router.post('/signup', authController.signup);
 
 module.exports = router; 

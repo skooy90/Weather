@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const auth = require('../middleware/userAuth');
 
 /**
  * @swagger
@@ -141,35 +142,37 @@ const router = express.Router();
  *         description: 상품을 찾을 수 없음
  */
 
-// 라우트 구현
-router.get('/', (req, res) => {
+// 장바구니 조회 (인증 필요)
+router.get('/', auth, (req, res) => {
   res.json({
     success: true,
     cart: {
-      userId: 'user123',
+      userId: req.user._id,
       items: [],
       totalPrice: 0
     }
   });
 });
 
-router.post('/', (req, res) => {
+// 장바구니에 상품 추가 (인증 필요)
+router.post('/', auth, (req, res) => {
   res.json({
     success: true,
     cart: {
-      userId: 'user123',
+      userId: req.user._id,
       items: [req.body],
       totalPrice: 0
     }
   });
 });
 
-router.delete('/:productId', (req, res) => {
+// 장바구니에서 상품 제거 (인증 필요)
+router.delete('/:productId', auth, (req, res) => {
   res.json({
     success: true,
     message: '상품이 장바구니에서 제거되었습니다.',
     cart: {
-      userId: 'user123',
+      userId: req.user._id,
       items: [],
       totalPrice: 0
     }

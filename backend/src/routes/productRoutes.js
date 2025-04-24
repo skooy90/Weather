@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/productController');
+const auth = require('../middleware/userAuth');
 
 /**
  * @swagger
@@ -169,7 +170,7 @@ router.get('/:id', productController.getProduct);
  *       401:
  *         $ref: '#/components/responses/UnauthorizedError'
  */
-router.post('/', productController.createProduct);
+router.post('/', auth, productController.createProduct);
 
 /**
  * @swagger
@@ -211,7 +212,7 @@ router.post('/', productController.createProduct);
  *       404:
  *         description: 제품을 찾을 수 없음
  */
-router.put('/:id', productController.updateProduct);
+router.put('/:id', auth, productController.updateProduct);
 
 /**
  * @swagger
@@ -248,6 +249,6 @@ router.put('/:id', productController.updateProduct);
  *       404:
  *         description: 제품을 찾을 수 없음
  */
-router.delete('/:id', productController.deleteProduct);
+router.delete('/:id', auth, productController.deleteProduct);
 
 module.exports = router; 

@@ -1,4 +1,4 @@
-export const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://weather-backend-knii.onrender.com/api';
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
 export const API_ENDPOINTS = {
   weather: `${API_BASE_URL}/weather`,

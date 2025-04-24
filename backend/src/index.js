@@ -13,6 +13,8 @@ const productRoutes = require('./routes/productRoutes');
 const productDetailRoutes = require('./routes/productDetailRoutes');
 const cartRoutes = require('./routes/cartRoutes');
 const userRoutes = require('./routes/userRoutes');
+const authRoutes = require('./routes/auth');
+const contentRoutes = require('./routes/contentRoutes');
 
 const app = express();
 
@@ -117,11 +119,12 @@ app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok' });
 });
 
-app.use('/api/auth', require('./routes/auth'));
+app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/product-details', productDetailRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/contents', contentRoutes);
 
 // 404 에러 처리
 app.use((req, res) => {
@@ -148,13 +151,19 @@ app.use((err, req, res, next) => {
 
 // MongoDB 연결
 const connectWithRetry = () => {
-    mongoose.connect(process.env.MONGODB_URI, {
+    const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/weather_app';
+    
+    console.log('MongoDB 연결 시도:', MONGODB_URI);
+    
+    mongoose.connect(MONGODB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
         serverSelectionTimeoutMS: 5000
     })
     .then(() => {
         console.log('MongoDB 연결 성공');
         // 서버 시작
-        const PORT = process.env.PORT || 3000;
+        const PORT = process.env.PORT || 5000;
         app.listen(PORT, () => {
             console.log(`서버가 ${PORT} 포트에서 실행 중입니다.`);
         });

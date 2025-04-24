@@ -134,4 +134,58 @@ export const removeFromCart = async (productId) => {
     console.error('장바구니 삭제 중 오류:', error);
     throw error;
   }
+};
+
+export const signUp = async (userData) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/signup`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || '회원가입에 실패했습니다.');
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const login = async (credentials) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: credentials.username,
+        password: credentials.password
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      if (response.status === 401) {
+        throw new Error('401');
+      }
+      throw new Error(errorData.message || '로그인에 실패했습니다.');
+    }
+
+    const data = await response.json();
+    // 토큰 저장
+    localStorage.setItem('token', data.token);
+    return data;
+  } catch (error) {
+    if (error.message === '401') {
+      throw error;
+    }
+    throw new Error(error.message || '서버와의 연결에 실패했습니다.');
+  }
 }; 

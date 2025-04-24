@@ -1,30 +1,38 @@
 # Render 서버 등록 작업 기록
 
-## 1. 초기 설정 문제점 발견
-- Dockerfile 경로 문제
-- Nginx 설정 파일 경로 문제
-- 환경 변수 충돌 가능성
-- 권한 설정 부족
+## 1. 초기 환경 설정
+### 1.1 프로젝트 구조
+- 프론트엔드: React + Vite
+  - React: 사용자 인터페이스 구축을 위한 JavaScript 라이브러리
+  - Vite: 빠른 개발 환경과 최적화된 빌드를 위한 빌드 도구
+- 백엔드: Node.js + Express
+  - Node.js: 서버 사이드 JavaScript 런타임
+  - Express: 웹 애플리케이션 프레임워크
+- 데이터베이스: MongoDB Atlas
+  - 클라우드 기반 NoSQL 데이터베이스 서비스
+  - 자동 확장성과 고가용성 제공
 
-## 2. 수정된 Dockerfile
+### 1.2 Docker 설정
 ```dockerfile
 # 빌드 스테이지
 FROM node:18-alpine as builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
-COPY . .
+COPY public ./public
+COPY src ./src
+COPY vite.config.js ./
+COPY index.html ./
 RUN npm run build
 
 # 프로덕션 스테이지
 FROM nginx:alpine
-ENV PORT=${PORT:-10000}
 
 # Nginx 구성 파일 복사
 RUN mkdir -p /etc/nginx/conf.d
 COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
-COPY --from=builder /app/build /usr/share/nginx/html
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 # 권한 설정
 RUN chown -R nginx:nginx /usr/share/nginx/html && \
@@ -33,181 +41,163 @@ RUN chown -R nginx:nginx /usr/share/nginx/html && \
     chown -R nginx:nginx /var/log/nginx && \
     chown -R nginx:nginx /etc/nginx/conf.d && \
     mkdir -p /var/run && \
+    mkdir -p /var/tmp/nginx && \
+    mkdir -p /var/lib/nginx && \
     chown -R nginx:nginx /var/run && \
+    chown -R nginx:nginx /var/tmp/nginx && \
+    chown -R nginx:nginx /var/lib/nginx && \
+    chown -R nginx:nginx /tmp && \
     touch /var/run/nginx.pid && \
     chown -R nginx:nginx /var/run/nginx.pid && \
     chmod 644 /etc/nginx/nginx.conf && \
     chmod 644 /etc/nginx/conf.d/default.conf && \
+    chmod -R 755 /var/lib/nginx && \
+    chmod -R 755 /var/tmp/nginx && \
     chown -R nginx:nginx /etc/nginx
 
 USER nginx
-
-EXPOSE ${PORT}
-
+EXPOSE 10000
 CMD ["nginx", "-g", "daemon off;"]
 ```
 
-## 3. 수정된 render.yaml
-```yaml
-services:
-  - type: web
-    name: weather-frontend
-    env: docker
-    dockerfilePath: ./frontend/Dockerfile
-    dockerCommand: nginx -g "daemon off;"
-    envVars:
-      - key: PORT
-        value: 10000
-      - key: VITE_API_URL
-        value: https://weather-backend-knii.onrender.com/api
-      - key: VITE_ENV
-        value: production
-      - key: VITE_CACHE_TIME
-        value: 3600
-      - key: VITE_LOG_LEVEL
-        value: info
-      - key: VITE_ENABLE_AUTH
-        value: true
-      - key: VITE_ENABLE_CART
-        value: true
-      - key: VITE_SITE_NAME
-        value: KYSong Store
-      - key: VITE_CONTACT_EMAIL
-        value: support@kysong.store
-    healthCheckPath: /
-    autoDeploy: true
-```
-
-## 4. 주요 수정사항
-1. Dockerfile 경로 수정
-   - `WORKDIR /app`로 변경 (frontend 접두사 제거)
-   - 파일 복사 경로 수정 (`./nginx/` 접두사 추가)
-   - 빌드된 파일 경로 수정 (`/app/build`로 변경)
-
-2. Nginx 설정
-   - 설정 파일 경로 수정
-   - 권한 설정 강화
-   - 환경 변수 처리 개선
-
-3. 환경 변수
-   - `PORT` 환경 변수 기본값 설정
-   - Vite 관련 환경 변수 추가
-
-4. 권한 설정
-   - Nginx 사용자 권한 강화
-   - 파일 권한 명시적 설정
-
-## 5. 빌드 순서
-1. GitHub 저장소 클론
-2. render.yaml 확인
-3. Dockerfile 실행
-   - 빌더 스테이지: Node.js 빌드
-   - 프로덕션 스테이지: Nginx 설정
-4. 환경 변수 적용
-5. 컨테이너 실행
-
-## 6. 주의사항
-- Render에서 제공하는 PORT 환경 변수와의 충돌 방지
-- Nginx 설정 파일의 올바른 경로 지정
-- 파일 권한 설정의 중요성
-- 환경 변수의 적절한 기본값 설정
-
-## 7. 최종 확인사항
-1. 프로젝트 구조 확인 완료
-2. 실제 파일 경로 확인 완료
-3. 환경 변수 사용 여부 확인 완료
-4. Nginx 설정 파일 내용 확인 완료
-5. Dockerfile 경로 수정 완료
-
-## 2024-04-21 작업 내용
-
-### 1. Docker 빌드 오류 해결
-- `npm ci` 명령어 오류 해결
-  - `package-lock.json` 파일이 없어서 발생한 오류
-  - `npm install`로 변경하여 해결
-
-### 2. Vite 빌드 설정 수정
-- `vite.config.js` 수정
-  - `base: './'` 추가하여 상대 경로 설정
-  - 빌드 출력 디렉토리 설정 (`outDir: 'dist'`)
-  - 소스맵 활성화 및 최소화 설정
-  - 청크 분할 설정 추가
-
-### 3. 의존성 패키지 추가
-- `package.json` 수정
-  - `terser` 패키지 추가 (빌드 최소화를 위해)
-  - 버전: ^5.27.2
-
-### 4. Dockerfile 최적화
-- 빌드 스테이지 개선
-  - 파일 복사 순서 최적화
-  - 필요한 파일만 명시적으로 복사
-  - 권한 설정 추가
-- 프로덕션 스테이지 개선
-  - Nginx 설정 파일 복사 경로 수정
-  - 환경 변수 설정 추가
-  - 권한 설정 추가
-
-### 5. 빌드 및 실행 테스트
-- Docker 이미지 빌드 성공
-- 컨테이너 실행 테스트 완료
-- 포트 10000에서 정상 동작 확인
-
-### 6. Render 배포 준비
-- Build Command: `docker build -t weather-frontend .`
-- Start Command: `docker run -p $PORT:$PORT weather-frontend`
-
-## 2024-04-21 추가 작업 내용
-
-### 7. Nginx 설정 수정
-- `nginx.conf` 수정
-  - `user nginx;` 지시문 제거 (경고 해결)
-  - worker_processes 설정 최적화
-
-- `default.conf` 수정
-  - 포트 설정을 정적 값으로 변경 (`listen 10000;`)
-  - 환경 변수 처리 방식 개선
-
-- `Dockerfile` 수정
-  - PORT 환경 변수 제거
-  - EXPOSE 포트를 정적 값으로 변경
-  - 권한 설정 최적화
-
-### 8. Render 배포 설정 수정
-- `render.yaml` 수정
-  - `dockerCommand` 변경: `docker run -p $PORT:10000 weather-frontend`
-  - 기존 `nginx -g "daemon off;"` 명령어 제거
-  - 환경 변수 설정 유지
-
-## 2024-04-21 추가 작업 내용 2
-
-### 9. Render 서비스 설정 상세
-- Docker 설정
-  - Dockerfile Path: `/frontend/Dockerfile`
-  - Build Context Directory: `/frontend`
-  - Docker Command 제거 (Dockerfile의 CMD 사용)
-
-- 빌드 필터 설정
-  - Included Paths:
-    - `/frontend/*`
-    - `/render.yaml`
-  - 프론트엔드 관련 파일 변경시에만 자동 배포되도록 설정
-
-- Health Check 설정
-  - Path: `/healthz` 추가
-  - Nginx 설정 수정 필요
-
-### 10. Nginx 설정 추가
+## 2. Nginx 설정
+### 2.1 기본 설정
 ```nginx
-# default.conf에 추가
-location /healthz {
-    access_log off;
-    add_header Content-Type text/plain;
-    return 200 'OK';
+# nginx.conf
+worker_processes auto;
+pid /var/run/nginx.pid;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    # 로그 포맷 설정
+    log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+                    '$status $body_bytes_sent "$http_referer" '
+                    '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log /var/log/nginx/access.log main;
+    error_log /var/log/nginx/error.log warn;
+
+    # 기본 설정
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay on;
+    keepalive_timeout 65;
+    types_hash_max_size 2048;
+
+    # GZIP 설정
+    gzip on;
+    gzip_disable "msie6";
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+
+    include /etc/nginx/conf.d/*.conf;
+}
+
+# default.conf
+server {
+    listen 10000;
+    server_name localhost;
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # 보안 헤더 설정
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-XSS-Protection "1; mode=block";
+    add_header X-Content-Type-Options "nosniff";
+    add_header Referrer-Policy "strict-origin-when-cross-origin";
+    add_header Content-Security-Policy "default-src 'self' https: http: data: blob: 'unsafe-inline'";
+
+    # Health Check
+    location /healthz {
+        access_log off;
+        add_header Content-Type text/plain;
+        return 200 'OK';
+    }
+
+    location / {
+        try_files $uri $uri/ /index.html;
+        expires -1;
+    }
+
+    location /static {
+        expires 1y;
+        add_header Cache-Control "public, no-transform";
+    }
+
+    # API 프록시 설정
+    location /api {
+        proxy_pass https://weather-backend-knii.onrender.com;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # 에러 페이지
+    error_page 404 /index.html;
+    error_page 500 502 503 504 /50x.html;
+    location = /50x.html {
+        root /usr/share/nginx/html;
+    }
 }
 ```
 
-### 11. render.yaml 업데이트
+## 3. 데이터베이스 설정
+### 3.1 MongoDB Atlas 설정
+- 클러스터 생성
+  - M0 무료 티어 사용
+  - 자동 백업 활성화
+- 데이터베이스 생성: `weather`
+  - 컬렉션 자동 생성 설정
+- 사용자 생성 및 권한 설정
+  - Read and write to any database 권한 부여
+  - 비밀번호 정책 준수
+- 네트워크 액세스 설정: `0.0.0.0/0`
+  - 모든 IP에서 접근 허용
+  - 보안 그룹 설정
+
+### 3.2 데이터베이스 모델
+```javascript
+// Product 모델
+const productSchema = new mongoose.Schema({
+  name: String,
+  price: Number,
+  description: String,
+  category: String,
+  stock: Number,
+  status: String
+});
+
+// User 모델
+const userSchema = new mongoose.Schema({
+  email: String,
+  password: String,
+  name: String,
+  role: String
+});
+
+// Cart 모델
+const cartSchema = new mongoose.Schema({
+  userId: mongoose.Schema.Types.ObjectId,
+  items: [{
+    productId: mongoose.Schema.Types.ObjectId,
+    quantity: Number
+  }]
+});
+```
+
+## 4. Render 배포 설정
+### 4.1 render.yaml 설정
 ```yaml
 services:
   - type: web
@@ -238,207 +228,123 @@ services:
         value: KYSong Store
       - key: VITE_CONTACT_EMAIL
         value: support@kysong.store
+    autoDeploy: true
+
+  - type: web
+    name: weather-backend
+    env: docker
+    dockerfilePath: ./backend/Dockerfile
+    buildFilter:
+      paths:
+        - backend/**
+        - render.yaml
+    healthCheckPath: /api/health
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        value: mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@cluster0.mongodb.net/weather?retryWrites=true&w=majority
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGIN
+        value: https://weather-of7u.onrender.com
+      - key: LOG_LEVEL
+        value: info
+    autoDeploy: true
 ```
 
-### 12. Render 웹 인터페이스 설정
-- 수동 설정 항목
-  - Dockerfile Path: `/frontend/Dockerfile` 입력
-  - Docker Build Context Directory: `/frontend` 입력
-  - Root Directory: 비워두기 (기본값 사용)
+### 4.2 환경 변수 설정
+- 프론트엔드 환경 변수
+  - `PORT`: 서버 포트 (10000)
+  - `VITE_API_URL`: 백엔드 API URL
+  - `VITE_ENV`: 실행 환경 (production)
+  - `VITE_CACHE_TIME`: 캐시 시간 (3600초)
+  - `VITE_LOG_LEVEL`: 로그 레벨 (info)
+  - `VITE_ENABLE_AUTH`: 인증 기능 활성화
+  - `VITE_ENABLE_CART`: 장바구니 기능 활성화
+  - `VITE_SITE_NAME`: 사이트 이름
+  - `VITE_CONTACT_EMAIL`: 연락처 이메일
 
-- 자동 적용되는 설정 (render.yaml)
-  - 환경 변수들
-  - Health Check 경로: `/healthz`
-  - 빌드 필터: `frontend/**`, `render.yaml`
-  - Auto Deploy: 활성화
-
-### 13. 백엔드 연결 설정
-- Nginx 프록시 설정 수정
-  - 기존: `http://backend:3000`
-  - 변경: `https://weather-backend-knii.onrender.com`
-  - 이유: Docker 컨테이너 간 직접 통신이 아닌 실제 백엔드 URL로 변경
-
-- 주의사항
-  - HTTPS 사용 (보안 연결)
-  - CORS 설정 확인 필요
-  - 프록시 헤더 설정 유지
-
-### 14. MongoDB 연결 설정
-- 경고 메시지 해결
-  - `useNewUrlParser`, `useUnifiedTopology` 옵션 관련 경고는 무시 가능
-  - MongoDB 드라이버 4.0 이상에서는 자동 적용
-
-- 환경 변수 설정
-  - `MONGODB_URI`: MongoDB Atlas 연결 문자열
-  - `MONGODB_USERNAME`: MongoDB 사용자 이름
-  - `MONGODB_PASSWORD`: MongoDB 비밀번호
+- 백엔드 환경 변수
+  - `PORT`: 서버 포트 (3000)
+  - `NODE_ENV`: 실행 환경 (production)
+  - `MONGODB_URI`: MongoDB 연결 문자열
   - `JWT_SECRET`: JWT 토큰 암호화 키
+  - `CORS_ORIGIN`: 프론트엔드 도메인
+  - `LOG_LEVEL`: 로그 레벨 (info)
 
-- render.yaml 수정
-  - 백엔드 서비스 설정 추가
-  - MongoDB 환경 변수 설정
-  - CORS 설정
-  - 로깅 레벨 설정
+## 5. API 구조
+### 5.1 엔드포인트 구성
+- `/api/weather`: 날씨 정보 API
+  - 날씨 데이터 조회
+  - 위치 기반 검색
+- `/api/auth`: 인증 관련 API
+  - 로그인/회원가입
+  - 토큰 관리
+- `/api/products`: 상품 관리 API
+  - CRUD 작업
+  - 검색/필터링
+- `/api/product-details`: 상품 상세 정보 API
+  - 상세 정보 조회
+  - 리뷰 관리
+- `/api/cart`: 장바구니 API
+  - 장바구니 관리
+  - 결제 처리
+- `/api/users`: 사용자 관리 API
+  - 프로필 관리
+  - 권한 관리
 
-### 15. 환경 변수 추가 설정
-- `NODE_ENV` 환경 변수
-  - 프론트엔드와 백엔드 모두 `production` 으로 설정
-  - 프로덕션 환경에서의 최적화된 동작을 위해 필요
-  - 빌드 프로세스와 런타임 동작에 영향
-  - Vite와 React의 최적화 기능 활성화
+### 5.2 Swagger 설정
+- UI 경로: `/api-docs`
+  - API 문서화
+  - 테스트 인터페이스
+- JSON 경로: `/api-docs/swagger.json`
+  - API 스키마 정의
+- 보안 설정: Bearer 토큰 인증
+  - API 보안
+  - 인증 테스트
 
-- 주요 영향
-  - 개발 도구 비활성화
-  - 에러 메시지 최소화
-  - 성능 최적화 활성화
-  - 캐싱 전략 최적화
+## 6. 주요 문제 해결
+### 6.1 Nginx 권한 문제
+- PID 파일 권한 설정
+  - 프로세스 관리
+  - 권한 오류 해결
+- 로그 디렉토리 권한 설정
+  - 로그 기록
+  - 접근 제어
+- 정적 파일 권한 설정
+  - 파일 서빙
+  - 보안 강화
 
-### 16. 백엔드 Render 설정 파일 추가
-- `backend/render.yaml` 파일 생성
-  - 서비스 이름: `weather-backend`
-  - Docker 환경 설정
-  - 환경 변수 설정:
-    - `NODE_ENV=production`
-    - `PORT=3000`
-    - MongoDB 연결 정보
-    - JWT 설정
-    - CORS 설정
-    - 로깅 레벨
-
-- 빌드 필터 설정
-  - 모든 파일 변경 감지
-  - 자동 배포 활성화
-
-- 헬스 체크 설정
-  - 경로: `/health`
-  - 상태 모니터링
-
-### 17. Nginx PID 파일 권한 설정
-- Dockerfile 수정
-  - `/var/run` 디렉토리 생성 및 권한 설정
-  - 디렉토리 소유권을 nginx 사용자로 변경
-  - PID 파일 권한 문제 해결
-
-- 수정된 권한 설정
-  ```dockerfile
-  mkdir -p /var/run && \
-  chown -R nginx:nginx /var/run && \
-  touch /var/run/nginx.pid && \
-  chown -R nginx:nginx /var/run/nginx.pid
-  ```
-
-- 주의사항
-  - 컨테이너 재시작시에도 권한 유지
-  - nginx 프로세스의 PID 파일 접근 보장
-  - 보안상 최소 권한 원칙 준수
-
-### 18. 추가 Nginx 디렉토리 권한 설정
-- 추가된 디렉토리 권한 설정
-  - `/var/tmp/nginx`: 임시 파일 저장소
-  - `/var/lib/nginx`: Nginx 라이브러리 파일
-  - `/tmp`: 시스템 임시 파일
-  
-- 권한 설정 상세
-  ```dockerfile
-  mkdir -p /var/tmp/nginx && \
-  mkdir -p /var/lib/nginx && \
-  chown -R nginx:nginx /var/tmp/nginx && \
-  chown -R nginx:nginx /var/lib/nginx && \
-  chown -R nginx:nginx /tmp && \
-  chmod -R 755 /var/lib/nginx && \
-  chmod -R 755 /var/tmp/nginx
-  ```
-
-- 보안 고려사항
-  - 각 디렉토리별 적절한 권한 수준 설정
-  - nginx 사용자만 필요한 접근 권한 보유
-  - 임시 파일 디렉토리 보안 강화
-
-### 19. Swagger UI 의존성 추가
-- `index.html` 수정
-  - Swagger UI CSS 추가
-  - Swagger UI Bundle 스크립트 추가
-  - Swagger UI Standalone Preset 추가
-  
-- 추가된 의존성
-  ```html
-  <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui.css" />
-  <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-bundle.js"></script>
-  <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-standalone-preset.js"></script>
-  ```
-
-- 주의사항
-  - unpkg CDN 사용
-  - 버전 5.11.0 명시
-  - 순서대로 로드되도록 배치
-
-### 20. Swagger UI 컴포넌트 설정
-- `SwaggerUI.jsx` 컴포넌트 생성
-  ```jsx
-  const SwaggerUI = () => {
-    useEffect(() => {
-      const ui = SwaggerUIBundle({
-        ...SWAGGER_CONFIG,
-        url: 'https://weather-backend-knii.onrender.com/api-docs',
-      });
-    }, []);
-
-    return <div id="swagger-ui" />;
-  };
-  ```
-
-- Swagger 설정 파일 (`swagger.js`)
-  ```javascript
-  export const SWAGGER_CONFIG = {
-    dom_id: '#swagger-ui',
-    deepLinking: true,
-    presets: [
-      SwaggerUIBundle.presets.apis,
-      SwaggerUIStandalonePreset
-    ],
-    layout: "BaseLayout",
-    docExpansion: 'list',
-    defaultModelsExpandDepth: 1,
-    defaultModelExpandDepth: 1,
-    defaultModelRendering: 'model',
-    displayRequestDuration: true,
-    filter: true,
-    operationsSorter: 'alpha',
-    tagsSorter: 'alpha',
-    persistAuthorization: true
-  }
-  ```
-
-- 라우터 설정 (`App.jsx`)
-  - `/api-docs` 경로에 SwaggerUI 컴포넌트 연결
-  - 페이지 컴포넌트로 구현하여 독립적인 라우팅 제공
-
-- 주요 기능
-  - API 문서 자동 로드
-  - 대화형 API 테스트 인터페이스
-  - 인증 상태 유지
-  - API 엔드포인트 정렬 및 필터링
-  - 문서 확장/축소 기능
-
-### 21. MongoDB 연결 설정 업데이트
-- 더 이상 사용되지 않는 옵션 제거
-  - `useNewUrlParser` 제거 (MongoDB 드라이버 4.0.0 이후 불필요)
-  - `useUnifiedTopology` 제거 (MongoDB 드라이버 4.0.0 이후 불필요)
-
-- 수정된 연결 설정
-  ```javascript
-  mongoose.connect(process.env.MONGODB_URI, {
-    serverSelectionTimeoutMS: 5000
-  })
-  ```
-
-- 주요 변경사항
-  - 최신 MongoDB 드라이버 호환성 개선
-  - 불필요한 경고 메시지 제거
-  - 연결 타임아웃 설정 유지
+### 6.2 MongoDB 연결 문제
+- 연결 문자열 형식 확인
+  - 올바른 형식 검증
+  - 오류 방지
+- 데이터베이스 이름 포함
+  - 연결 대상 지정
+  - 스키마 관리
+- 인증 정보 일치 확인
+  - 보안 검증
+  - 접근 제어
+- 사용자 권한 설정
+  - 작업 범위 정의
+  - 보안 강화
 
 ## 다음 작업 예정
-- Render 서버에 배포
-- 환경 변수 설정
-- 도메인 연결
-- SSL 인증서 설정 
+- API 엔드포인트 구현
+  - RESTful API 설계
+  - 에러 처리
+- 프론트엔드 UI 개발
+  - 반응형 디자인
+  - 사용자 경험 개선
+- 사용자 인증 구현
+  - JWT 기반 인증
+  - 세션 관리
+- 상품 관리 기능 구현
+  - CRUD 작업
+  - 검색 기능
+- 장바구니 기능 구현
+  - 상태 관리
+  - 결제 통합 
