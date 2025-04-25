@@ -39,15 +39,16 @@ RUN mkdir -p /app/logs && \
     chown -R node:node /app && \
     chmod -R 755 /app
 
-# 포트 설정
-EXPOSE 3000
+# Render의 PORT 환경 변수 사용
+ENV PORT=3000
+EXPOSE ${PORT}
 
 # 사용자 변경
 USER node
 
 # 헬스체크 설정
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:3000/health || exit 1
+    CMD curl -f http://localhost:${PORT}/health || exit 1
 
 # 앱 실행
-CMD ["node", "src/index.js"] 
+CMD ["sh", "-c", "node src/index.js --port ${PORT}"] 
