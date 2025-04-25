@@ -26,13 +26,16 @@ RUN apk add --no-cache curl
 WORKDIR /app
 
 # 패키지 파일 복사
-COPY package*.json ./
-
-# 프로덕션 의존성만 설치
-RUN npm install --omit=dev
-
-# 빌더에서 필요한 파일만 복사
+COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/src ./src
+COPY --from=builder /app/package*.json ./
+
+# 환경 변수 설정
+ENV NODE_ENV=production
+ENV MONGODB_URI=mongodb+srv://skooy:Nebuw399XaI8yamb@skyman.r0gqkcz.mongodb.net/weather?retryWrites=true&w=majority&appName=SkyMan
+
+# 초기 데이터 설정
+RUN node src/scripts/seedData.js
 
 # 로그 디렉토리 생성 및 권한 설정
 RUN mkdir -p /app/logs && \
@@ -51,4 +54,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:${PORT}/health || exit 1
 
 # 앱 실행
-CMD ["sh", "-c", "node src/index.js --port ${PORT}"] 
+CMD ["npm", "start"] 

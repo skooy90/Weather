@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    minlength: 8,
+    minlength: 6,
     select: false,
     comment: '암호화된 비밀번호'
   },
@@ -121,6 +121,10 @@ const userSchema = new mongoose.Schema({
     comment: '계정 잠금 해제 시간'
   },
   createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
     type: Date,
     default: Date.now
   }

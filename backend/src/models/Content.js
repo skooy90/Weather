@@ -6,26 +6,22 @@ const contentSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
-  content: {
-    type: String,
-    required: true
-  },
-  author: {
+  description: {
     type: String,
     required: true
   },
   category: {
     type: String,
     required: true,
-    enum: ['trend', 'life', 'tech', 'family']
+    enum: ['ai-tech', 'digital-nomad', 'self-improvement', 'side-hustle', 'outdoor']
   },
   image: {
     type: String,
     required: true
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
+  date: {
+    type: String,
+    required: true
   },
   views: {
     type: Number,
@@ -36,17 +32,9 @@ const contentSchema = new mongoose.Schema({
     default: 0
   },
   comments: [{
-    author: String,
-    content: String,
-    createdAt: {
-      type: Date,
-      default: Date.now
-    },
-    status: {
-      type: String,
-      enum: ['게시', '숨김', '삭제'],
-      default: '게시'
-    }
+    user: String,
+    text: String,
+    date: String
   }]
 });
 

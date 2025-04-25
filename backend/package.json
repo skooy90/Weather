@@ -1,40 +1,23 @@
 {
-  "name": "backend",
+  "name": "weather-backend",
   "version": "1.0.0",
-  "description": "Shopping Mall Backend",
+  "description": "Weather App Backend",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-    "test": "jest --detectOpenHandles",
-    "test:watch": "jest --watch",
-    "seed": "node src/scripts/seed.js",
-    "setup-images": "node src/scripts/uploadImages.js"
+    "test": "jest"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "compression": "^1.7.4",
-    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "express-rate-limit": "^7.1.5",
-    "express-validator": "^7.0.1",
-    "helmet": "^7.0.0",
     "jsonwebtoken": "^9.0.0",
-    "mongoose": "^7.0.3",
-    "morgan": "^1.10.0",
-    "node-cache": "^5.1.2",
-    "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.0",
-    "winston": "^3.11.0"
+    "mongoose": "^7.0.3"
   },
   "devDependencies": {
-    "jest": "^29.7.0",
-    "nodemon": "^2.0.22",
-    "supertest": "^6.3.4"
-  },
-  "engines": {
-    "node": ">=18.0.0"
+    "jest": "^29.5.0",
+    "nodemon": "^2.0.22"
   }
 }

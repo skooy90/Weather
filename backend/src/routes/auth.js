@@ -42,39 +42,60 @@ const User = require('../models/User');
  */
 router.post('/register', async (req, res) => {
   try {
-    const { email, password, name } = req.body;
+    const { username, password, email } = req.body;
 
-    // 이메일 중복 체크
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: '이미 존재하는 이메일입니다.' });
+    // 필수 필드 검증
+    if (!username || !password || !email) {
+      return res.status(400).json({ message: '모든 필드를 입력해주세요.' });
     }
 
-    // 비밀번호 해시화
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // 이메일 형식 검증
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: '유효하지 않은 이메일 형식입니다.' });
+    }
 
-    // 사용자 생성
+    // 사용자 이름 중복 검사
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return res.status(400).json({ message: '이미 사용 중인 사용자 이름입니다.' });
+    }
+
+    // 이메일 중복 검사
+    const existingEmail = await User.findOne({ email });
+    if (existingEmail) {
+      return res.status(400).json({ message: '이미 사용 중인 이메일입니다.' });
+    }
+
+    // 새 사용자 생성
     const user = new User({
-      email,
-      password: hashedPassword,
-      name
+      username,
+      password,
+      email
     });
 
     await user.save();
 
     // JWT 토큰 생성
     const token = jwt.sign(
-      { userId: user._id },
+      { id: user._id },
       process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN }
+      { expiresIn: '24h' }
     );
 
     res.status(201).json({
       message: '회원가입이 완료되었습니다.',
-      token
+      token,
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.role
+      }
     });
   } catch (error) {
-    res.status(500).json({ message: '서버 에러가 발생했습니다.' });
+    console.error('회원가입 에러:', error);
+    res.status(500).json({ message: '서버 오류가 발생했습니다.' });
   }
 });
 
