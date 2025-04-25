@@ -20,7 +20,7 @@ RUN if [ ! -f vite.config.js ]; then echo "vite.config.js not found" && exit 1; 
     if [ ! -d src ]; then echo "src directory not found" && exit 1; fi
 
 # 환경 변수 파일 복사 (있는 경우)
-COPY ./.env* ./ || true
+COPY ./.env* ./
 
 # 빌드 실행
 RUN npm run build
@@ -30,8 +30,12 @@ FROM nginx:alpine
 
 # Nginx 구성 파일 복사
 RUN mkdir -p /etc/nginx/conf.d
-COPY ./nginx/nginx.conf /etc/nginx/nginx.conf || echo "Using default nginx.conf"
-COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf || echo "Using default server configuration"
+COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
+COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
+
+# Render 환경 변수 처리
+RUN sed -i "s/listen 10000/listen ${PORT:-10000}/g" /etc/nginx/conf.d/default.conf && \
+    sed -i "s|proxy_pass https://weather-backend-knii.onrender.com|proxy_pass ${API_URL:-https://weather-backend-knii.onrender.com}|g" /etc/nginx/conf.d/default.conf
 
 # 빌드된 파일 복사 및 확인
 COPY --from=builder /app/dist/ /usr/share/nginx/html/
@@ -61,6 +65,8 @@ RUN mkdir -p /var/run && \
 
 USER nginx
 
-EXPOSE 10000
+# Render의 PORT 환경 변수 사용
+ENV PORT=10000
+EXPOSE ${PORT}
 
-CMD ["nginx", "-g", "daemon off;"] 
+CMD ["sh", "-c", "nginx -g 'daemon off;'"] 
