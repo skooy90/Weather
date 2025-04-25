@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useContext } from 'react';
 
 export const ThemeContext = createContext();
 
@@ -16,15 +16,10 @@ export const ThemeProvider = ({ children }) => {
   );
 };
 
-const useTheme = () => {
+export const useTheme = () => {
   const context = useContext(ThemeContext);
   if (!context) {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
   return context;
-};
-
-module.exports = {
-  ThemeProvider,
-  useTheme
 }; 
