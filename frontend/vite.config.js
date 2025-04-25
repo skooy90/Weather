@@ -24,11 +24,11 @@ export default defineConfig({
     sourcemap: false,
     minify: 'terser',
     rollupOptions: {
+      external: ['aos', 'framer-motion'],
       output: {
         manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          utils: ['axios'],
-          motion: ['framer-motion']
+          'aos': ['aos'],
+          'framer-motion': ['framer-motion']
         }
       }
     }
@@ -39,6 +39,6 @@ export default defineConfig({
     }
   },
   optimizeDeps: {
-    include: ['framer-motion']
+    include: ['aos', 'framer-motion']
   }
 }); 
