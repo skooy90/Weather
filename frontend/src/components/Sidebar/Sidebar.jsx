@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
 
 const SidebarContainer = styled.aside`
   width: 300px;
@@ -118,76 +117,54 @@ const PopularContentTitle = styled.h4`
   margin-bottom: 0.25rem;
 `;
 
-const PopularContentMeta = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.75rem;
+const PopularContentDescription = styled.p`
+  font-size: 0.875rem;
   color: #718096;
 `;
 
 const Sidebar = () => {
-  const { t } = useTranslation();
-
-  // 임시 데이터
-  const popularKeywords = ['트렌드', '라이프스타일', '쇼핑', '푸드'];
-  const partnerRecommendations = [
-    {
-      id: 1,
-      name: '파트너 1',
-      description: '추천 상품 소개',
-      image: 'https://via.placeholder.com/50'
-    },
-    // 더 많은 파트너 데이터...
-  ];
-  const popularContents = [
-    {
-      id: 1,
-      title: '인기 콘텐츠 1',
-      views: 1234
-    },
-    // 더 많은 인기 콘텐츠 데이터...
-  ];
-
   return (
     <SidebarContainer>
       <SidebarSection>
-        <SectionTitle>{t('main.sidebar.popularKeywords')}</SectionTitle>
+        <SectionTitle>인기 검색어</SectionTitle>
         <KeywordList>
-          {popularKeywords.map(keyword => (
-            <KeywordBadge key={keyword}>{keyword}</KeywordBadge>
-          ))}
+          <KeywordBadge>날씨</KeywordBadge>
+          <KeywordBadge>기상</KeywordBadge>
+          <KeywordBadge>예보</KeywordBadge>
         </KeywordList>
       </SidebarSection>
 
       <SidebarSection>
-        <SectionTitle>{t('main.sidebar.partnerRecommendations')}</SectionTitle>
+        <SectionTitle>파트너</SectionTitle>
         <PartnerList>
-          {partnerRecommendations.map(partner => (
-            <PartnerItem key={partner.id}>
-              <PartnerImage src={partner.image} alt={partner.name} />
-              <PartnerInfo>
-                <PartnerName>{partner.name}</PartnerName>
-                <PartnerDescription>{partner.description}</PartnerDescription>
-              </PartnerInfo>
-            </PartnerItem>
-          ))}
+          <PartnerItem>
+            <PartnerImage src="/images/partner1.jpg" alt="파트너 1" />
+            <PartnerInfo>
+              <PartnerName>기상청</PartnerName>
+              <PartnerDescription>정확한 날씨 정보 제공</PartnerDescription>
+            </PartnerInfo>
+          </PartnerItem>
+          <PartnerItem>
+            <PartnerImage src="/images/partner2.jpg" alt="파트너 2" />
+            <PartnerInfo>
+              <PartnerName>기상연구소</PartnerName>
+              <PartnerDescription>날씨 연구 및 분석</PartnerDescription>
+            </PartnerInfo>
+          </PartnerItem>
         </PartnerList>
       </SidebarSection>
 
       <SidebarSection>
-        <SectionTitle>{t('main.sidebar.popularContents')}</SectionTitle>
+        <SectionTitle>인기 콘텐츠</SectionTitle>
         <PopularContentList>
-          {popularContents.map(content => (
-            <PopularContentItem key={content.id}>
-              <div>
-                <PopularContentTitle>{content.title}</PopularContentTitle>
-                <PopularContentMeta>
-                  👁️ {content.views} {t('main.sidebar.views')}
-                </PopularContentMeta>
-              </div>
-            </PopularContentItem>
-          ))}
+          <PopularContentItem>
+            <PopularContentTitle>주간 날씨 예보</PopularContentTitle>
+            <PopularContentDescription>다음 주 날씨를 미리 확인하세요</PopularContentDescription>
+          </PopularContentItem>
+          <PopularContentItem>
+            <PopularContentTitle>기상 특보</PopularContentTitle>
+            <PopularContentDescription>주의해야 할 기상 현상</PopularContentDescription>
+          </PopularContentItem>
         </PopularContentList>
       </SidebarSection>
     </SidebarContainer>

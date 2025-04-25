@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
 
 const StyledButtonContainer = styled.div`
   display: flex;
@@ -40,7 +39,6 @@ const InteractionButtons = ({
   onShare,
   onBookmark
 }) => {
-  const { t } = useTranslation();
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
 
@@ -64,7 +62,7 @@ const InteractionButtons = ({
         $active={isLiked}
         $activeColor="#e53e3e"
         onClick={handleLike}
-        aria-label={t('interaction.like')}
+        aria-label="Like"
       >
         <svg
           width="16"
@@ -83,7 +81,7 @@ const InteractionButtons = ({
 
       <StyledButton
         onClick={handleShare}
-        aria-label={t('interaction.share')}
+        aria-label="Share"
       >
         <svg
           width="16"
@@ -107,7 +105,7 @@ const InteractionButtons = ({
         $active={isBookmarked}
         $activeColor="#4299e1"
         onClick={handleBookmark}
-        aria-label={t('interaction.bookmark')}
+        aria-label="Bookmark"
       >
         <svg
           width="16"
@@ -123,7 +121,7 @@ const InteractionButtons = ({
         </svg>
       </StyledButton>
 
-      <StyledButton aria-label={t('interaction.views')}>
+      <StyledButton aria-label="Views">
         <svg
           width="16"
           height="16"

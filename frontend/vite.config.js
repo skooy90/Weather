@@ -18,11 +18,9 @@ export default defineConfig({
     minify: 'terser',
     sourcemap: false,
     rollupOptions: {
-      external: ['framer-motion'],
       output: {
         manualChunks: {
-          'react-vendor': ['react', 'react-dom'],
-          'framer-motion': ['framer-motion']
+          'react-vendor': ['react', 'react-dom']
         },
         chunkFileNames: 'assets/[name]-[hash].js',
         entryFileNames: 'assets/[name]-[hash].js',
@@ -31,8 +29,7 @@ export default defineConfig({
     }
   },
   optimizeDeps: {
-    include: ['react', 'react-dom'],
-    exclude: ['framer-motion']
+    include: ['react', 'react-dom']
   },
   resolve: {
     alias: {

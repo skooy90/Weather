@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
 
 const SearchContainer = styled.div`
   position: relative;
@@ -74,7 +73,6 @@ const SuggestionItem = styled.div`
 `;
 
 const SearchBar = ({ onSearch, suggestions = [] }) => {
-  const { t } = useTranslation();
   const [query, setQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
@@ -111,7 +109,7 @@ const SearchBar = ({ onSearch, suggestions = [] }) => {
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder={t('search.placeholder')}
+          placeholder="Search"
           onFocus={() => query.length > 0 && setShowSuggestions(true)}
           onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
         />

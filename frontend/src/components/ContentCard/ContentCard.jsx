@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
 import InteractionButtons from '../InteractionButtons/InteractionButtons';
 
 const StyledCardContainer = styled.div`
@@ -76,7 +75,6 @@ const StyledDate = styled.span`
 `;
 
 const ContentCard = ({ content, onLike, onShare, onClick }) => {
-  const { t } = useTranslation();
   const { title, description, category, image, date, likes, views } = content;
 
   const formatDate = (dateString) => {
@@ -119,7 +117,7 @@ const ContentCard = ({ content, onLike, onShare, onClick }) => {
         />
       </StyledImageContainer>
       <StyledContentContainer>
-        <StyledCategory>{t(`categories.${category}`)}</StyledCategory>
+        <StyledCategory>{category}</StyledCategory>
         <StyledTitle>{title}</StyledTitle>
         <StyledDescription>{description}</StyledDescription>
         <StyledMetaContainer>

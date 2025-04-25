@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
 import ContentCard from '../ContentCard/ContentCard';
 
 const StyledContentGrid = styled.div`
@@ -32,8 +31,6 @@ const StyledCategoryTab = styled.button`
 `;
 
 const ContentGrid = ({ contents, onLike, onShare, onCardClick }) => {
-  const { t } = useTranslation();
-
   return (
     <StyledContentGrid>
       {contents.map(content => (
