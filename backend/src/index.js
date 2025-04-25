@@ -35,8 +35,8 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: 'http://localhost:5000',
-        description: 'Development server'
+        url: 'https://weather-backend-knii.onrender.com',
+        description: 'Production server'
       }
     ]
   },
@@ -45,6 +45,11 @@ const swaggerOptions = {
 
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+// 루트 경로 응답
+app.get('/', (req, res) => {
+  res.json({ message: 'Welcome to the Weather API' });
+});
 
 // 라우트 설정
 app.use('/api/auth', authRoutes);
