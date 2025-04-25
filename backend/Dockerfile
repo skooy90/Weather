@@ -32,10 +32,13 @@ COPY --from=builder /app/package*.json ./
 
 # 환경 변수 설정
 ENV NODE_ENV=production
+ENV PORT=3000
 ENV MONGODB_URI=mongodb+srv://skooy:Nebuw399XaI8yamb@skyman.r0gqkcz.mongodb.net/weather?retryWrites=true&w=majority&appName=SkyMan
 
-# 초기 데이터 설정
-RUN node src/scripts/seedData.js
+# 데이터베이스 시딩 실행
+RUN echo "데이터베이스 시딩을 시작합니다..." && \
+    node src/scripts/seedData.js && \
+    echo "데이터베이스 시딩이 완료되었습니다."
 
 # 로그 디렉토리 생성 및 권한 설정
 RUN mkdir -p /app/logs && \
@@ -43,7 +46,6 @@ RUN mkdir -p /app/logs && \
     chmod -R 755 /app
 
 # Render의 PORT 환경 변수 사용
-ENV PORT=3000
 EXPOSE ${PORT}
 
 # 사용자 변경

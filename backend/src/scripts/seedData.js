@@ -12,6 +12,19 @@ const User = require('../models/User');
 const Comment = require('../models/Comment');
 const bcrypt = require('bcryptjs');
 
+console.log('데이터베이스 연결을 시작합니다...');
+console.log('MONGODB_URI:', process.env.MONGODB_URI);
+
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => {
+    console.log('MongoDB에 성공적으로 연결되었습니다.');
+    return seedDatabase();
+  })
+  .catch(err => {
+    console.error('MongoDB 연결 중 오류가 발생했습니다:', err);
+    process.exit(1);
+  });
+
 /**
  * 초기 상품 데이터
  * @type {Array<Object>}
@@ -141,14 +154,7 @@ const dummyContents = [
  */
 async function seedDatabase() {
   try {
-    // MongoDB 연결
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/weather', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
-    console.log('MongoDB에 연결되었습니다.');
-
-    // 기존 데이터 삭제
+    console.log('기존 데이터 삭제를 시작합니다...');
     await User.deleteMany({});
     await Content.deleteMany({});
     await Comment.deleteMany({});
@@ -257,11 +263,8 @@ async function seedDatabase() {
 
     console.log('데이터베이스 시딩이 완료되었습니다.');
     process.exit(0);
-  } catch (error) {
-    console.error('데이터베이스 시딩 중 오류 발생:', error);
+  } catch (err) {
+    console.error('데이터베이스 시딩 중 오류가 발생했습니다:', err);
     process.exit(1);
   }
-}
-
-// 스크립트 실행
-seedDatabase(); 
+} 
