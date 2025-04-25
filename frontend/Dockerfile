@@ -1,13 +1,15 @@
 # 빌드 스테이지
-FROM node:18-alpine as builder
+FROM node:20-alpine as builder
 WORKDIR /app
+
+# 패키지 파일 복사 및 의존성 설치
 COPY package*.json ./
-RUN npm install
-RUN npm install styled-components
-COPY public ./public
-COPY src ./src
-COPY vite.config.js ./
-COPY index.html ./
+RUN npm install --production=false
+
+# 소스 코드 복사
+COPY . .
+
+# 빌드 실행
 RUN npm run build
 
 # 프로덕션 스테이지
