@@ -7,7 +7,12 @@ COPY package*.json ./
 RUN npm install --production=false
 
 # 소스 코드 복사
-COPY . .
+COPY public ./public
+COPY src ./src
+COPY vite.config.js ./
+COPY index.html ./
+COPY tsconfig.json ./
+COPY .env* ./
 
 # 빌드 실행
 RUN npm run build
