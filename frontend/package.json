@@ -5,10 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && chmod -R 755 dist",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "start": "vite"
+    "start": "vite",
+    "clean": "rm -rf dist node_modules/.vite",
+    "prebuild": "npm run clean"
   },
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",

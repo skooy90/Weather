@@ -29,9 +29,14 @@ export default defineConfig({
         manualChunks: {
           'aos': ['aos'],
           'framer-motion': ['framer-motion']
-        }
+        },
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]'
       }
-    }
+    },
+    chunkSizeWarningLimit: 1000,
+    emptyOutDir: true
   },
   resolve: {
     alias: {
@@ -39,6 +44,7 @@ export default defineConfig({
     }
   },
   optimizeDeps: {
-    include: ['aos', 'framer-motion']
+    include: ['aos', 'framer-motion'],
+    exclude: ['@testing-library/jest-dom', '@testing-library/react', '@testing-library/user-event']
   }
 }); 

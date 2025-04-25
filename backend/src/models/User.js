@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 /**
  * 사용자 모델 스키마
@@ -119,6 +119,10 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: null,
     comment: '계정 잠금 해제 시간'
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
   }
 }, {
   timestamps: true,
@@ -190,4 +194,4 @@ userSchema.methods.isLocked = function() {
 
 const User = mongoose.model('User', userSchema);
 
-export default User; 
+module.exports = User; 

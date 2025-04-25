@@ -4,25 +4,25 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
-const authRoutes = require('./routes/auth');
+const authRoutes = require('./routes/auth.js');
 const userRoutes = require('./routes/userRoutes');
 const productRoutes = require('./routes/productRoutes');
 const cartRoutes = require('./routes/cartRoutes');
-const contentRoutes = require('./routes/contentRoutes');
 const productDetailRoutes = require('./routes/productDetailRoutes');
+const contentRoutes = require('./routes/contentRoutes');
 
 dotenv.config();
 
 const app = express();
 
+// 미들웨어 설정
+app.use(cors());
+app.use(express.json());
+
 // MongoDB 연결
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('MongoDB 연결 성공'))
   .catch(err => console.error('MongoDB 연결 실패:', err));
-
-// 미들웨어
-app.use(cors());
-app.use(express.json());
 
 // Swagger 설정
 const swaggerOptions = {
@@ -46,13 +46,13 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-// 라우트
+// 라우트 설정
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
-app.use('/api/content', contentRoutes);
 app.use('/api/product-details', productDetailRoutes);
+app.use('/api/contents', contentRoutes);
 
 // 에러 핸들링
 app.use((err, req, res, next) => {
