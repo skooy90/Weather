@@ -1,7 +1,8 @@
-const express = require('express');
+import express from 'express';
+import authController from '../controllers/authController.js';
+import auth from '../middleware/userAuth.js';
+
 const router = express.Router();
-const authController = require('../controllers/authController');
-const auth = require('../middleware/userAuth');
 
 /**
  * @swagger
@@ -85,4 +86,4 @@ router.get('/me', auth, authController.getCurrentUser);
 // 회원가입
 router.post('/signup', authController.signup);
 
-module.exports = router; 
+export default router; 

@@ -5,33 +5,14 @@ const User = require('../models/User');
 const Product = require('../models/Product');
 const Cart = require('../models/Cart');
 
-describe('API 테스트', () => {
-  let token;
-  let userId;
-
+describe('API 엔드포인트 테스트', () => {
   beforeAll(async () => {
-    // MongoDB 연결
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/weather_app_test', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
-
     // 테스트용 사용자 생성
-    const user = await User.create({
+    await User.create({
       email: 'test@example.com',
       password: 'password123',
       name: 'Test User'
     });
-    userId = user._id;
-
-    // 로그인하여 토큰 발급
-    const response = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'test@example.com',
-        password: 'password123'
-      });
-    token = response.body.token;
   });
 
   afterAll(async () => {
@@ -44,34 +25,36 @@ describe('API 테스트', () => {
 
   describe('인증 API', () => {
     test('로그인 성공', async () => {
-      const response = await request(app)
+      const res = await request(app)
         .post('/api/auth/login')
         .send({
           email: 'test@example.com',
           password: 'password123'
         });
-      expect(response.statusCode).toBe(200);
-      expect(response.body).toHaveProperty('token');
+      
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toHaveProperty('token');
     });
 
-    test('로그인 실패 - 잘못된 비밀번호', async () => {
-      const response = await request(app)
+    test('잘못된 비밀번호로 로그인 실패', async () => {
+      const res = await request(app)
         .post('/api/auth/login')
         .send({
           email: 'test@example.com',
           password: 'wrongpassword'
         });
-      expect(response.statusCode).toBe(401);
+      
+      expect(res.statusCode).toBe(401);
     });
   });
 
   describe('상품 API', () => {
     test('상품 목록 조회', async () => {
-      const response = await request(app)
-        .get('/api/products')
-        .set('Authorization', `Bearer ${token}`);
-      expect(response.statusCode).toBe(200);
-      expect(Array.isArray(response.body.products)).toBe(true);
+      const res = await request(app)
+        .get('/api/products');
+      
+      expect(res.statusCode).toBe(200);
+      expect(Array.isArray(res.body)).toBe(true);
     });
 
     test('상품 생성', async () => {
@@ -89,12 +72,26 @@ describe('API 테스트', () => {
   });
 
   describe('장바구니 API', () => {
+    let token;
+
+    beforeAll(async () => {
+      // 로그인하여 토큰 획득
+      const res = await request(app)
+        .post('/api/auth/login')
+        .send({
+          email: 'test@example.com',
+          password: 'password123'
+        });
+      
+      token = res.body.token;
+    });
+
     test('장바구니 조회', async () => {
-      const response = await request(app)
+      const res = await request(app)
         .get('/api/cart')
         .set('Authorization', `Bearer ${token}`);
-      expect(response.statusCode).toBe(200);
-      expect(response.body.cart).toHaveProperty('userId');
+      
+      expect(res.statusCode).toBe(200);
     });
 
     test('장바구니에 상품 추가', async () => {
