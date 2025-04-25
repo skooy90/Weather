@@ -5,7 +5,7 @@ WORKDIR /app
 # 패키지 파일 복사 및 의존성 설치
 COPY package*.json ./
 RUN if [ ! -f package.json ]; then echo "package.json not found" && exit 1; fi && \
-    npm install --omit=dev
+    npm install
 
 # 소스 코드 복사 및 확인
 RUN mkdir -p public src
