@@ -3,7 +3,16 @@ import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react({
+      include: '**/*.{jsx,tsx}',
+      babel: {
+        plugins: [
+          ['@babel/plugin-transform-react-jsx', { runtime: 'automatic' }]
+        ]
+      }
+    })
+  ],
   base: './',
   server: {
     port: 3000,
@@ -24,6 +33,9 @@ export default defineConfig({
     sourcemap: false,
     minify: 'terser',
     rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html')
+      },
       external: ['aos', 'framer-motion'],
       output: {
         manualChunks: {
@@ -41,10 +53,11 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src')
-    }
+    },
+    extensions: ['.js', '.jsx', '.json', '.ts', '.tsx']
   },
   optimizeDeps: {
-    include: ['aos', 'framer-motion'],
+    include: ['aos', 'framer-motion', 'react', 'react-dom'],
     exclude: ['@testing-library/jest-dom', '@testing-library/react', '@testing-library/user-event']
   }
 }); 
