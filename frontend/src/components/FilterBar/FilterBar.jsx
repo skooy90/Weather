@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
 
 const FilterContainer = styled.div`
   display: flex;
@@ -40,8 +39,6 @@ const FilterBar = ({
   selectedCategory,
   onSelectCategory
 }) => {
-  const { t } = useTranslation();
-
   return (
     <FilterContainer>
       {categories.map((category) => (
