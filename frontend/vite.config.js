@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import path from 'path';
-import { terser } from '@rollup/plugin-terser';
+import terser from '@rollup/plugin-terser';
 
 export default defineConfig({
   plugins: [
@@ -10,42 +9,33 @@ export default defineConfig({
   ],
   server: {
     port: 3000,
-    host: true,
-    strictPort: true,
-    watch: {
-      usePolling: true
+    proxy: {
+      '/api': {
+        target: 'https://weather-backend-knii.onrender.com',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
     }
   },
   build: {
     outDir: 'dist',
-    assetsDir: 'assets',
-    minify: 'terser',
-    sourcemap: false,
+    sourcemap: true,
     rollupOptions: {
       output: {
         manualChunks: {
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
           'utils': ['axios', 'styled-components', 'framer-motion']
-        },
-        chunkFileNames: 'assets/[name]-[hash].js',
-        entryFileNames: 'assets/[name]-[hash].js',
-        assetFileNames: 'assets/[name]-[hash].[ext]'
+        }
       }
     }
   },
   optimizeDeps: {
-    include: [
-      'react',
-      'react-dom',
-      'react-router-dom',
-      'axios',
-      'styled-components',
-      'framer-motion'
-    ]
+    include: ['react', 'react-dom', 'react-router-dom', 'axios', 'styled-components', 'framer-motion']
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src')
+      '@': '/src'
     }
   }
 }); 

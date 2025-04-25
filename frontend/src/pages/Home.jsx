@@ -8,6 +8,7 @@ import { FaFire, FaShare, FaBookmark, FaStar, FaComment, FaEye, FaHeart } from '
 import SearchBar from '../components/SearchBar/SearchBar';
 import FilterBar from '../components/FilterBar/FilterBar';
 import ContentGrid from '../components/ContentGrid/ContentGrid';
+import Loading from '../components/Loading/Loading';
 import contentsData from '../data/contents.json';
 import { contentApi } from '../services/api';
 
@@ -416,11 +417,15 @@ const Home = () => {
   };
 
   if (loading) {
-    return <Loading>로딩 중...</Loading>;
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Loading />
+      </div>
+    );
   }
 
   if (error) {
-    return <Error>{error}</Error>;
+    return <div>Error: {error.message}</div>;
   }
 
   return (
