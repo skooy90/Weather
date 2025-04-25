@@ -29,7 +29,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # 프로덕션 의존성만 설치
-RUN npm install --only=production
+RUN npm install --omit=dev
 
 # 빌더에서 필요한 파일만 복사
 COPY --from=builder /app/src ./src
