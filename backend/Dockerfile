@@ -32,12 +32,12 @@ COPY --from=builder /app/package*.json ./
 
 # 환경 변수 설정
 ENV NODE_ENV=production
-ENV PORT=3000
+ENV PORT=10000
 ENV MONGODB_URI=mongodb+srv://skooy:Nebuw399XaI8yamb@skyman.r0gqkcz.mongodb.net/weather?retryWrites=true&w=majority&appName=SkyMan
 
 # .env 파일 생성
 RUN echo "NODE_ENV=production" > .env && \
-    echo "PORT=3000" >> .env && \
+    echo "PORT=10000" >> .env && \
     echo "MONGODB_URI=mongodb+srv://skooy:Nebuw399XaI8yamb@skyman.r0gqkcz.mongodb.net/weather?retryWrites=true&w=majority&appName=SkyMan" >> .env
 
 # 데이터베이스 시딩 실행
