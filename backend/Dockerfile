@@ -1,5 +1,5 @@
 # 개발 의존성 설치를 위한 빌드 스테이지
-FROM node:18-alpine as builder
+FROM node:18-alpine AS builder
 
 # 기본 도구 설치
 RUN apk add --no-cache curl
