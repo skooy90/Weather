@@ -2,8 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const swaggerUi = require('swagger-ui-express');
-const swaggerJsdoc = require('swagger-jsdoc');
 const authRoutes = require('./routes/auth.js');
 const userRoutes = require('./routes/userRoutes');
 const contentRoutes = require('./routes/contentRoutes');
@@ -27,28 +25,6 @@ app.use(express.json());
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('MongoDB 연결 성공'))
   .catch(err => console.error('MongoDB 연결 실패:', err));
-
-// Swagger 설정
-const swaggerOptions = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'Weather API',
-      version: '1.0.0',
-      description: 'Weather API Documentation'
-    },
-    servers: [
-      {
-        url: 'https://weather-backend-knii.onrender.com',
-        description: 'Production server'
-      }
-    ]
-  },
-  apis: ['./src/routes/*.js']
-};
-
-const swaggerDocs = swaggerJsdoc(swaggerOptions);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // 루트 경로 응답
 app.get('/', (req, res) => {
