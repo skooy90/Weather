@@ -5,7 +5,7 @@ services:
     dockerfilePath: ./frontend/Dockerfile
     buildFilter:
       paths:
-        - frontend/**
+        - /opt/render/project/src/frontend/**
         - render.yaml
     healthCheckPath: /healthz
     envVars:
