@@ -61,6 +61,7 @@ RUN mkdir -p /var/run && \
     chmod -R 755 /usr/share/nginx/html && \
     touch /var/run/nginx.pid && \
     chown nginx:nginx /var/run/nginx.pid && \
+    chmod 666 /var/run/nginx.pid && \
     chmod 644 /etc/nginx/nginx.conf && \
     chmod 644 /etc/nginx/conf.d/default.conf
 

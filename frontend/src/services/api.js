@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://weather-backend-knii.onrender.com/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -12,7 +12,7 @@ const api = axios.create({
 // 요청 인터셉터 - 토큰 추가
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_KEY);
+    const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -28,7 +28,7 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem(import.meta.env.VITE_AUTH_TOKEN_KEY);
+      localStorage.removeItem('token');
       window.location.href = '/login';
     }
     return Promise.reject(error);
@@ -40,11 +40,27 @@ export const contentApi = {
   // 모든 컨텐츠 조회
   getAllContents: () => api.get('/contents'),
   
+  // 카테고리 목록 조회
+  getCategories: () => api.get('/categories'),
+  
   // 카테고리별 컨텐츠 조회
   getContentsByCategory: (category) => api.get(`/contents/category/${category}`),
   
+  // 서브카테고리별 컨텐츠 조회
+  getContentsBySubcategory: (category, subcategory) => 
+    api.get(`/contents/category/${category}/subcategory/${subcategory}`),
+  
   // 특정 컨텐츠 조회
   getContentById: (id) => api.get(`/contents/${id}`),
+  
+  // 자동 콘텐츠 생성
+  generateContents: () => api.post('/contents/generate'),
+  
+  // 트렌딩 컨텐츠 조회
+  getTrendingContents: () => api.get('/contents/trending'),
+  
+  // 추천 컨텐츠 조회
+  getFeaturedContents: () => api.get('/contents/featured'),
   
   // 컨텐츠 생성
   createContent: (data) => api.post('/contents', data),
@@ -72,7 +88,7 @@ export const authApi = {
   
   // 로그아웃
   logout: () => {
-    localStorage.removeItem(import.meta.env.VITE_AUTH_TOKEN_KEY);
+    localStorage.removeItem('token');
     return Promise.resolve();
   },
   

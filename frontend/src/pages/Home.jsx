@@ -11,6 +11,9 @@ import ContentGrid from '../components/ContentGrid/ContentGrid';
 import Loading from '../components/Loading/Loading';
 import contentsData from '../data/contents.json';
 import { contentApi } from '../services/api';
+import ContentList from '../components/ContentList';
+import CategoryFilter from '../components/CategoryFilter';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const StyledHomeContainer = styled.div`
   max-width: 1400px;
@@ -242,27 +245,17 @@ const Home = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedSort, setSelectedSort] = useState('latest');
-  const [dateRange, setDateRange] = useState('all');
+  const [selectedSubcategory, setSelectedSubcategory] = useState('all');
   const [filteredContents, setFilteredContents] = useState([]);
   const [trendingContents, setTrendingContents] = useState([]);
   const [contents, setContents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [subcategories, setSubcategories] = useState({});
 
   // 모든 콘텐츠를 하나의 배열로 합치기
   const allContents = Object.values(contentsData).flat();
-
-  const categories = [
-    { id: '', name: '전체' },
-    { id: 'trending', name: '트렌드' },
-    { id: 'tech', name: '테크' },
-    { id: 'lifestyle', name: '라이프스타일' },
-    { id: 'shopping', name: '쇼핑' },
-    { id: 'food', name: '푸드' },
-    { id: 'hobby', name: '취미' },
-    { id: 'family', name: '가족' }
-  ];
 
   const sortOptions = [
     { value: 'latest', label: '최신순' },
@@ -293,6 +286,27 @@ const Home = () => {
       once: true,
     });
 
+    const fetchCategories = async () => {
+      try {
+        const response = await contentApi.getCategories();
+        setCategories(response.data);
+        
+        // 서브카테고리 데이터 구조화
+        const subcategoriesData = {};
+        response.data.forEach(category => {
+          if (category.id !== 'all') {
+            subcategoriesData[category.id] = category.subcategories || [];
+          }
+        });
+        setSubcategories(subcategoriesData);
+      } catch (err) {
+        setError('카테고리를 불러오는 중 오류가 발생했습니다.');
+        console.error('Error fetching categories:', err);
+      }
+    };
+
+    fetchCategories();
+
     // 트렌딩 콘텐츠 설정 (좋아요 수 기준)
     const trending = [...allContents]
       .sort((a, b) => b.likes - a.likes)
@@ -316,66 +330,44 @@ const Home = () => {
       );
     }
 
-    if (dateRange !== 'all') {
-      const now = new Date();
-      result = result.filter(content => {
-        const contentDate = new Date(content.date);
-        const diffTime = Math.abs(now - contentDate);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        
-        switch (dateRange) {
-          case 'today':
-            return diffDays === 0;
-          case 'week':
-            return diffDays <= 7;
-          case 'month':
-            return diffDays <= 30;
-          default:
-            return true;
-        }
-      });
+    if (selectedSubcategory !== 'all') {
+      result = result.filter(content =>
+        content.subcategory === selectedSubcategory
+      );
     }
 
     // 정렬
-    switch (selectedSort) {
-      case 'latest':
-        result.sort((a, b) => new Date(b.date) - new Date(a.date));
-        break;
-      case 'popular':
-        result.sort((a, b) => b.views - a.views);
-        break;
-      case 'trending':
-        result.sort((a, b) => b.likes - a.likes);
-        break;
-      default:
-        break;
-    }
+    result.sort((a, b) => new Date(b.date) - new Date(a.date));
 
     setFilteredContents(result);
-  }, [searchQuery, selectedCategory, selectedSort, dateRange]);
+  }, [searchQuery, selectedCategory, selectedSubcategory]);
 
   useEffect(() => {
     const fetchContents = async () => {
       try {
         setLoading(true);
+        setError(null);
+
         let response;
         if (selectedCategory === 'all') {
           response = await contentApi.getAllContents();
-        } else {
+        } else if (selectedSubcategory === 'all') {
           response = await contentApi.getContentsByCategory(selectedCategory);
+        } else {
+          response = await contentApi.getContentsBySubcategory(selectedCategory, selectedSubcategory);
         }
+
         setContents(response.data);
-        setError(null);
       } catch (err) {
-        setError('컨텐츠를 불러오는 중 오류가 발생했습니다.');
-        console.error(err);
+        setError('콘텐츠를 불러오는 중 오류가 발생했습니다.');
+        console.error('Error fetching contents:', err);
       } finally {
         setLoading(false);
       }
     };
 
     fetchContents();
-  }, [selectedCategory]);
+  }, [selectedCategory, selectedSubcategory]);
 
   const handleSearch = (query) => {
     setSearchQuery(query);
@@ -383,14 +375,11 @@ const Home = () => {
 
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
+    setSelectedSubcategory('all');
   };
 
-  const handleSortChange = (sort) => {
-    setSelectedSort(sort);
-  };
-
-  const handleDateRangeChange = (range) => {
-    setDateRange(range);
+  const handleSubcategoryChange = (subcategory) => {
+    setSelectedSubcategory(subcategory);
   };
 
   const handleSelectSuggestion = (suggestion) => {
@@ -417,15 +406,11 @@ const Home = () => {
   };
 
   if (loading) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <Loading />
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return <div className="error-message">{error}</div>;
   }
 
   return (
@@ -450,15 +435,13 @@ const Home = () => {
         </StyledSearchSection>
 
         <StyledFilterSection>
-          <FilterBar
-            categories={categories}
+          <CategoryFilter
             selectedCategory={selectedCategory}
-            onSelectCategory={setSelectedCategory}
-            sortOptions={sortOptions}
-            selectedSort={selectedSort}
-            onSelectSort={setSelectedSort}
-            dateRange={dateRange}
-            onDateRangeChange={setDateRange}
+            selectedSubcategory={selectedSubcategory}
+            onSelectCategory={handleCategoryChange}
+            onSelectSubcategory={handleSubcategoryChange}
+            categories={categories}
+            subcategories={subcategories}
           />
         </StyledFilterSection>
 
@@ -481,7 +464,7 @@ const Home = () => {
               <StyledContentSection data-aos="fade-up">
                 <h2>{categories.find(cat => cat.id === selectedCategory)?.name} 콘텐츠</h2>
                 <ContentGrid 
-                  contents={filteredContents} 
+                  contents={contents} 
                   onLike={handleLike} 
                   onShare={handleShare}
                   onCardClick={handleCardClick}
