@@ -35,8 +35,8 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # 빌드된 파일 복사
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# 80번 포트 노출
-EXPOSE 80
+# 3000번 포트 노출
+EXPOSE 3000
 
 # nginx 실행
 CMD ["nginx", "-g", "daemon off;"] 
