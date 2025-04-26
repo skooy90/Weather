@@ -8,7 +8,9 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://weather-backend-knii.onrender.com',
+        target: process.env.NODE_ENV === 'production' 
+          ? 'https://weather-backend-knii.onrender.com'
+          : 'http://localhost:10000',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, '')

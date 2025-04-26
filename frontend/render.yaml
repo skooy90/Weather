@@ -1,0 +1,54 @@
+services:
+  - type: web
+    name: weather-frontend
+    env: docker
+    dockerfilePath: ./frontend/Dockerfile
+    buildFilter:
+      paths:
+        - frontend/**
+        - render.yaml
+    healthCheckPath: /healthz
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: VITE_API_URL
+        value: https://weather-backend-knii.onrender.com/api
+      - key: VITE_ENV
+        value: production
+      - key: VITE_CACHE_TIME
+        value: 3600
+      - key: VITE_LOG_LEVEL
+        value: info
+      - key: VITE_ENABLE_AUTH
+        value: true
+      - key: VITE_ENABLE_CART
+        value: true
+      - key: VITE_SITE_NAME
+        value: KYSong Store
+      - key: VITE_CONTACT_EMAIL
+        value: support@kysong.store
+    autoDeploy: true
+
+  - type: web
+    name: weather-backend
+    env: docker
+    dockerfilePath: ./backend/Dockerfile
+    buildFilter:
+      paths:
+        - backend/**
+        - render.yaml
+    healthCheckPath: /api/health
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        value: mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@cluster0.mongodb.net/weather?retryWrites=true&w=majority
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGIN
+        value: https://weather-of7u.onrender.com
+      - key: LOG_LEVEL
+        value: info
+    autoDeploy: true 
