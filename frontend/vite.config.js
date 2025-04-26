@@ -6,7 +6,6 @@ export default defineConfig({
     react()
   ],
   server: {
-    port: parseInt(process.env.PORT) || 3000,
     proxy: {
       '/api': {
         target: process.env.VITE_API_URL || 'https://weather-backend-knii.onrender.com',

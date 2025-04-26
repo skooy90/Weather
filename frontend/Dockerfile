@@ -11,7 +11,6 @@ COPY . .
 
 # 환경 변수 설정
 ENV NODE_ENV=production
-ENV VITE_API_URL=${API_URL:-https://weather-backend-knii.onrender.com}
 
 # 빌드 실행
 RUN npm run build
@@ -23,10 +22,6 @@ FROM nginx:alpine
 RUN mkdir -p /etc/nginx/conf.d
 COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
-
-# Render 환경 변수 처리
-RUN sed -i "s/listen 10000/listen ${PORT:-10000}/g" /etc/nginx/conf.d/default.conf && \
-    sed -i "s|proxy_pass https://weather-backend-knii.onrender.com|proxy_pass ${API_URL:-https://weather-backend-knii.onrender.com}|g" /etc/nginx/conf.d/default.conf
 
 # 빌드된 파일 복사
 COPY --from=builder /app/dist /usr/share/nginx/html
@@ -48,7 +43,6 @@ RUN mkdir -p /var/run && \
     chmod -R 755 /var/log/nginx && \
     chmod -R 755 /var/tmp/nginx && \
     chmod -R 755 /var/lib/nginx && \
-    chmod -R 755 /usr/share/nginx/html && \
     touch /var/run/nginx.pid && \
     chown nginx:nginx /var/run/nginx.pid && \
     chmod 666 /var/run/nginx.pid && \
@@ -57,9 +51,5 @@ RUN mkdir -p /var/run && \
 
 # Nginx 사용자로 전환
 USER nginx
-
-# Render의 PORT 환경 변수 사용
-ENV PORT=10000
-EXPOSE ${PORT}
 
 CMD ["sh", "-c", "nginx -g 'daemon off;'"] 
