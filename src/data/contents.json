@@ -1,0 +1,156 @@
+{
+  "trending": [
+    {
+      "id": "trend-1",
+      "title": "ChatGPT-5 출시 임박, 새로운 기능 미리보기",
+      "category": "ai-tech",
+      "description": "OpenAI가 곧 출시할 ChatGPT-5의 새로운 기능과 성능 개선사항을 알아봅니다.",
+      "image": "/images/trending/chatgpt5-preview.jpg",
+      "date": "2024-04-23",
+      "views": 15234,
+      "likes": 892
+    },
+    {
+      "id": "trend-2",
+      "title": "2024 재택근무 트렌드 리포트",
+      "category": "digital-nomad",
+      "description": "글로벌 기업들의 재택근무 현황과 미래 전망을 분석합니다.",
+      "image": "/images/trending/remote-work-2024.jpg",
+      "date": "2024-04-22",
+      "views": 12453,
+      "likes": 731
+    }
+  ],
+  "lifestyle": [
+    {
+      "id": "life-1",
+      "title": "직장인 아침 루틴 만들기",
+      "category": "self-improvement",
+      "description": "바쁜 직장인을 위한 효율적인 아침 시간 활용법을 소개합니다.",
+      "image": "/images/lifestyle/morning-routine.jpg",
+      "date": "2024-04-23",
+      "views": 8234,
+      "likes": 567
+    },
+    {
+      "id": "life-2",
+      "title": "월급 3배 만드는 부업 아이디어",
+      "category": "side-hustle",
+      "description": "직장인이 실천할 수 있는 현실적인 부업 방법을 알아봅니다.",
+      "image": "/images/lifestyle/side-hustle.jpg",
+      "date": "2024-04-22",
+      "views": 10234,
+      "likes": 892
+    }
+  ],
+  "shopping": [
+    {
+      "id": "shop-1",
+      "title": "아마존 직구 필수템 TOP 10",
+      "category": "shopping",
+      "description": "해외직구 고수들이 추천하는 아마존 인기 제품을 소개합니다.",
+      "image": "/images/shopping/amazon-picks.jpg",
+      "date": "2024-04-23",
+      "views": 7234,
+      "likes": 432
+    },
+    {
+      "id": "shop-2",
+      "title": "2024 봄 패션 트렌드",
+      "category": "fashion",
+      "description": "올 봄 놓치면 후회할 패션 아이템을 소개합니다.",
+      "image": "/images/shopping/spring-fashion.jpg",
+      "date": "2024-04-22",
+      "views": 9234,
+      "likes": 678
+    }
+  ],
+  "food": [
+    {
+      "id": "food-1",
+      "title": "직장인 한끼 레시피",
+      "category": "recipe",
+      "description": "15분만에 완성하는 든든한 한끼 요리법을 소개합니다.",
+      "image": "/images/food/quick-meal.jpg",
+      "date": "2024-04-23",
+      "views": 6234,
+      "likes": 445
+    },
+    {
+      "id": "food-2",
+      "title": "서울 숨은 맛집 TOP 10",
+      "category": "restaurant",
+      "description": "로컬이 추천하는 진짜 맛집을 소개합니다.",
+      "image": "/images/food/seoul-food.jpg",
+      "date": "2024-04-22",
+      "views": 8234,
+      "likes": 567
+    }
+  ],
+  "hobby": [
+    {
+      "id": "hobby-1",
+      "title": "주말 캠핑 초보 가이드",
+      "category": "outdoor",
+      "description": "캠핑 입문자를 위한 필수 준비물과 꿀팁을 소개합니다.",
+      "image": "/images/hobby/camping-guide.jpg",
+      "date": "2024-04-23",
+      "views": 5234,
+      "likes": 345
+    },
+    {
+      "id": "hobby-2",
+      "title": "반려견 분리불안 극복하기",
+      "category": "pets",
+      "description": "전문가가 알려주는 반려견 분리불안 해결 방법.",
+      "image": "/images/hobby/dog-training.jpg",
+      "date": "2024-04-22",
+      "views": 7234,
+      "likes": 512
+    }
+  ],
+  "tech": [
+    {
+      "id": "tech-1",
+      "title": "애플 비전 프로 실사용 후기",
+      "category": "gadgets",
+      "description": "한 달간 애플 비전 프로를 사용해본 솔직 리뷰.",
+      "image": "/images/tech/vision-pro.jpg",
+      "date": "2024-04-23",
+      "views": 11234,
+      "likes": 823
+    },
+    {
+      "id": "tech-2",
+      "title": "2024년 노트북 구매 가이드",
+      "category": "review",
+      "description": "용도별 추천 노트북과 구매 시 체크포인트.",
+      "image": "/images/tech/laptop-guide.jpg",
+      "date": "2024-04-22",
+      "views": 9234,
+      "likes": 678
+    }
+  ],
+  "family": [
+    {
+      "id": "family-1",
+      "title": "초등학생 코딩 교육 시작하기",
+      "category": "education",
+      "description": "아이와 함께하는 코딩 교육 방법과 추천 도구.",
+      "image": "/images/family/kids-coding.jpg",
+      "date": "2024-04-23",
+      "views": 4234,
+      "likes": 234
+    },
+    {
+      "id": "family-2",
+      "title": "시니어를 위한 스마트폰 가이드",
+      "category": "senior",
+      "description": "부모님을 위한 스마트폰 활용 팁과 추천 앱.",
+      "image": "/images/family/senior-tech.jpg",
+      "date": "2024-04-22",
+      "views": 6234,
+      "likes": 445
+    }
+  ]
+} 
