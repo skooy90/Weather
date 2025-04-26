@@ -1,0 +1,64 @@
+{
+  "common": {
+    "loading": "로딩 중...",
+    "error": "오류가 발생했습니다",
+    "retry": "다시 시도",
+    "cancel": "취소",
+    "confirm": "확인",
+    "save": "저장",
+    "delete": "삭제",
+    "edit": "편집",
+    "search": "검색",
+    "back": "뒤로"
+  },
+  "auth": {
+    "login": "로그인",
+    "logout": "로그아웃",
+    "register": "회원가입",
+    "email": "이메일",
+    "password": "비밀번호",
+    "forgotPassword": "비밀번호 찾기",
+    "resetPassword": "비밀번호 재설정"
+  },
+  "products": {
+    "title": "상품",
+    "new": "신규 상품",
+    "popular": "인기 상품",
+    "categories": "카테고리",
+    "price": "가격",
+    "stock": "재고",
+    "description": "상품 설명"
+  },
+  "cart": {
+    "title": "장바구니",
+    "empty": "장바구니가 비어있습니다",
+    "checkout": "결제하기",
+    "total": "총 금액",
+    "quantity": "수량"
+  },
+  "main": {
+    "hero": {
+      "title": "환영합니다",
+      "description": "최신 트렌드와 유용한 정보를 만나보세요"
+    },
+    "content": {
+      "categories": {
+        "trending": "트렌드",
+        "lifestyle": "라이프스타일",
+        "shopping": "쇼핑",
+        "food": "푸드"
+      },
+      "actions": {
+        "like": "좋아요",
+        "share": "공유"
+      }
+    },
+    "sidebar": {
+      "popularKeywords": "인기 키워드",
+      "partnerRecommendations": "파트너 추천",
+      "popularContents": "인기 콘텐츠",
+      "views": "조회수",
+      "readMore": "더보기"
+    }
+  }
+} 

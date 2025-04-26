@@ -1,4 +1,5 @@
 version: '3.8'
+<<<<<<< HEAD
 services:
   frontend:
     build:
@@ -34,3 +35,49 @@ services:
     depends_on:
       - frontend
     restart: unless-stopped 
+=======
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: weather_mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    networks:
+      - weather_network
+
+  backend:
+    build: ./backend
+    container_name: weather_backend
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGODB_URI=mongodb://admin:password@mongodb:27017/weather_app?authSource=admin
+      - NODE_ENV=development
+    depends_on:
+      - mongodb
+    networks:
+      - weather_network
+
+  frontend:
+    build: ./frontend
+    container_name: weather_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000
+    networks:
+      - weather_network
+
+volumes:
+  mongodb_data:
+
+networks:
+  weather_network:
+    driver: bridge 
+>>>>>>> 1aa7b0d965b753291e7a67c33949ce435a144791
