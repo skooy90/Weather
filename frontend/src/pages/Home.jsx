@@ -11,9 +11,7 @@ import ContentGrid from '../components/ContentGrid/ContentGrid';
 import Loading from '../components/Loading/Loading';
 import contentsData from '../data/contents.json';
 import { contentApi } from '../services/api';
-import ContentList from '../components/ContentList';
 import CategoryFilter from '../components/CategoryFilter';
-import LoadingSpinner from '../components/LoadingSpinner';
 
 const StyledHomeContainer = styled.div`
   max-width: 1400px;
@@ -406,7 +404,7 @@ const Home = () => {
   };
 
   if (loading) {
-    return <LoadingSpinner />;
+    return <Loading />;
   }
 
   if (error) {

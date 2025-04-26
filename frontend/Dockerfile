@@ -13,7 +13,7 @@ COPY . .
 ENV NODE_ENV=production
 
 # 빌드 실행
-RUN npm run build
+RUN npm run build -- --mode production
 
 # 프로덕션 스테이지
 FROM nginx:alpine
