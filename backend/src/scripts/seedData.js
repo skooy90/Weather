@@ -196,38 +196,54 @@ async function seedDatabase() {
       {
         title: 'ChatGPT-5 출시 임박, 새로운 기능 미리보기',
         description: 'ChatGPT-5의 새로운 기능에 대한 상세한 내용...',
-        category: '트렌드',
+        category: 'ai-tech',
         image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995',
-        author: admin._id,
-        status: '게시',
-        views: 15234
+        date: '2024-04-23',
+        views: 15234,
+        likes: 892,
+        comments: [
+          {
+            user: users[0]._id,
+            text: '정말 기대됩니다!',
+            date: '2024-04-23'
+          }
+        ]
       },
       {
         title: 'React 19의 새로운 기능',
         description: 'React 19의 새로운 기능에 대한 상세한 내용...',
-        category: '테크',
+        category: 'ai-tech',
         image: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee',
-        author: admin._id,
-        status: '게시',
-        views: 11234
+        date: '2024-04-22',
+        views: 11234,
+        likes: 731,
+        comments: [
+          {
+            user: users[1]._id,
+            text: '좋은 정보 감사합니다.',
+            date: '2024-04-22'
+          }
+        ]
       },
       {
         title: '2024년 최고의 스마트폰 추천',
         description: '2024년 최고의 스마트폰 추천 목록...',
-        category: '쇼핑',
+        category: 'digital-nomad',
         image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9',
-        author: users[0]._id,
-        status: '게시',
-        views: 9876
+        date: '2024-04-21',
+        views: 9876,
+        likes: 567,
+        comments: []
       },
       {
         title: '건강한 식습관 만들기',
         description: '건강한 식습관을 만드는 방법...',
-        category: '푸드',
+        category: 'self-improvement',
         image: 'https://images.unsplash.com/photo-1498837167922-ddd27525d352',
-        author: users[1]._id,
-        status: '임시저장',
-        views: 0
+        date: '2024-04-20',
+        views: 0,
+        likes: 0,
+        comments: []
       }
     ]);
     console.log('콘텐츠가 생성되었습니다.');

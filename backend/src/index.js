@@ -6,10 +6,9 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 const authRoutes = require('./routes/auth.js');
 const userRoutes = require('./routes/userRoutes');
-const productRoutes = require('./routes/productRoutes');
-const cartRoutes = require('./routes/cartRoutes');
-const productDetailRoutes = require('./routes/productDetailRoutes');
 const contentRoutes = require('./routes/contentRoutes');
+const detailRoutes = require('./routes/detailRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 dotenv.config();
 
@@ -34,9 +33,9 @@ const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Shopping Mall API',
+      title: 'Weather API',
       version: '1.0.0',
-      description: 'Shopping Mall API Documentation'
+      description: 'Weather API Documentation'
     },
     servers: [
       {
@@ -59,10 +58,9 @@ app.get('/', (req, res) => {
 // 라우트 설정
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/cart', cartRoutes);
-app.use('/api/product-details', productDetailRoutes);
 app.use('/api/contents', contentRoutes);
+app.use('/api/details', detailRoutes);
+app.use('/api/admin', adminRoutes);
 
 // 에러 핸들링
 app.use((err, req, res, next) => {
