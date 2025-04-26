@@ -14,7 +14,8 @@ RUN npm install
 COPY . .
 
 # 권한 설정
-RUN chown -R node:node /app
+RUN chown -R node:node /app && \
+    chmod -R 755 /app/node_modules/.bin
 
 # node 사용자로 전환
 USER node
