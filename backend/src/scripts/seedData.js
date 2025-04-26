@@ -8,6 +8,8 @@ require('dotenv').config();
 const Content = require('../models/Content');
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
+const Category = require('../models/Category');
+const Subcategory = require('../models/Subcategory');
 
 console.log('데이터베이스 연결을 시작합니다...');
 console.log('MONGODB_URI:', process.env.MONGODB_URI);
@@ -33,6 +35,8 @@ async function seedDatabase() {
     console.log('기존 데이터 삭제를 시작합니다...');
     await User.deleteMany({});
     await Content.deleteMany({});
+    await Category.deleteMany({});
+    await Subcategory.deleteMany({});
     console.log('기존 데이터가 삭제되었습니다.');
 
     // 관리자 계정 생성
@@ -108,59 +112,124 @@ async function seedDatabase() {
     ]);
     console.log('일반 사용자 계정이 생성되었습니다.');
 
+    // 카테고리 생성
+    const categories = await Category.create([
+      {
+        name: 'AI & Tech',
+        slug: 'ai-tech',
+        description: '인공지능과 기술 관련 콘텐츠'
+      },
+      {
+        name: 'Digital Nomad',
+        slug: 'digital-nomad',
+        description: '디지털 노마드 라이프스타일'
+      },
+      {
+        name: 'Self Improvement',
+        slug: 'self-improvement',
+        description: '자기계발 관련 콘텐츠'
+      }
+    ]);
+
+    // 서브카테고리 생성
+    const subcategories = await Subcategory.create([
+      {
+        name: 'AI News',
+        category: categories[0]._id,
+        description: 'AI 관련 최신 뉴스'
+      },
+      {
+        name: 'Tech Trends',
+        category: categories[0]._id,
+        description: '기술 트렌드'
+      },
+      {
+        name: 'Remote Work',
+        category: categories[1]._id,
+        description: '원격 근무 관련 정보'
+      },
+      {
+        name: 'Travel Tips',
+        category: categories[1]._id,
+        description: '여행 팁'
+      },
+      {
+        name: 'Personal Growth',
+        category: categories[2]._id,
+        description: '개인 성장'
+      },
+      {
+        name: 'Health & Wellness',
+        category: categories[2]._id,
+        description: '건강과 웰빙'
+      }
+    ]);
+
     // 콘텐츠 생성
     const contents = await Content.create([
       {
         title: 'ChatGPT-5 출시 임박, 새로운 기능 미리보기',
-        description: 'ChatGPT-5의 새로운 기능에 대한 상세한 내용...',
-        category: 'ai-tech',
+        author: 'Tech Reporter',
+        content: 'ChatGPT-5의 새로운 기능에 대한 상세한 내용...',
+        category: categories[0]._id,
+        subcategory: subcategories[0]._id,
         image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995',
-        date: '2024-04-23',
         views: 15234,
         likes: 892,
         comments: [
           {
-            user: users[0]._id,
-            text: '정말 기대됩니다!',
-            date: '2024-04-23'
+            author: users[0].profile.name,
+            content: '정말 기대됩니다!',
+            createdAt: new Date('2024-04-23')
           }
-        ]
+        ],
+        tags: ['AI', 'ChatGPT', '기술'],
+        status: 'published'
       },
       {
         title: 'React 19의 새로운 기능',
-        description: 'React 19의 새로운 기능에 대한 상세한 내용...',
-        category: 'ai-tech',
+        author: 'Web Developer',
+        content: 'React 19의 새로운 기능에 대한 상세한 내용...',
+        category: categories[0]._id,
+        subcategory: subcategories[1]._id,
         image: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee',
-        date: '2024-04-22',
         views: 11234,
         likes: 731,
         comments: [
           {
-            user: users[1]._id,
-            text: '좋은 정보 감사합니다.',
-            date: '2024-04-22'
+            author: users[1].profile.name,
+            content: '좋은 정보 감사합니다.',
+            createdAt: new Date('2024-04-22')
           }
-        ]
+        ],
+        tags: ['React', 'JavaScript', '프론트엔드'],
+        status: 'published'
       },
       {
         title: '2024년 최고의 스마트폰 추천',
-        description: '2024년 최고의 스마트폰 추천 목록...',
-        category: 'digital-nomad',
+        author: 'Tech Reviewer',
+        content: '2024년 최고의 스마트폰 추천 목록...',
+        category: categories[1]._id,
+        subcategory: subcategories[2]._id,
         image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9',
-        date: '2024-04-21',
         views: 9876,
         likes: 567,
-        comments: []
+        comments: [],
+        tags: ['스마트폰', '리뷰', '가젯'],
+        status: 'published'
       },
       {
         title: '건강한 식습관 만들기',
-        description: '건강한 식습관을 만드는 방법...',
-        category: 'self-improvement',
+        author: 'Health Expert',
+        content: '건강한 식습관을 만드는 방법...',
+        category: categories[2]._id,
+        subcategory: subcategories[5]._id,
         image: 'https://images.unsplash.com/photo-1498837167922-ddd27525d352',
-        date: '2024-04-20',
         views: 0,
         likes: 0,
-        comments: []
+        comments: [],
+        tags: ['건강', '식습관', '웰빙'],
+        status: 'published'
       }
     ]);
     console.log('콘텐츠가 생성되었습니다.');
