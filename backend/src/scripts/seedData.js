@@ -38,13 +38,25 @@ async function seedDatabase() {
     // 관리자 계정 생성
     const adminPassword = await bcrypt.hash('qwe@123', 10);
     const admin = await User.create({
-      name: '관리자',
-      username: 'admin',
       userId: 'admin123',
+      username: 'admin',
       email: 'admin@example.com',
       password: adminPassword,
-      phone: '010-1234-5678',
-      role: 'admin'
+      role: 'admin',
+      status: 'active',
+      profile: {
+        name: '관리자',
+        bio: '시스템 관리자',
+        avatar: 'https://example.com/avatar/admin.jpg',
+        language: 'ko'
+      },
+      preferences: {
+        theme: 'light',
+        notifications: {
+          email: true,
+          push: true
+        }
+      }
     });
     console.log('관리자 계정이 생성되었습니다.');
 
@@ -52,22 +64,46 @@ async function seedDatabase() {
     const userPassword = await bcrypt.hash('password123', 10);
     const users = await User.create([
       {
-        name: '사용자1',
-        username: 'user1',
         userId: 'user123',
+        username: 'user1',
         email: 'user1@example.com',
         password: userPassword,
-        phone: '010-2345-6789',
-        role: 'user'
+        role: 'user',
+        status: 'active',
+        profile: {
+          name: '사용자1',
+          bio: '일반 사용자',
+          avatar: 'https://example.com/avatar/user1.jpg',
+          language: 'ko'
+        },
+        preferences: {
+          theme: 'light',
+          notifications: {
+            email: true,
+            push: true
+          }
+        }
       },
       {
-        name: '사용자2',
-        username: 'user2',
         userId: 'user456',
+        username: 'user2',
         email: 'user2@example.com',
         password: userPassword,
-        phone: '010-3456-7890',
-        role: 'user'
+        role: 'user',
+        status: 'active',
+        profile: {
+          name: '사용자2',
+          bio: '일반 사용자',
+          avatar: 'https://example.com/avatar/user2.jpg',
+          language: 'ko'
+        },
+        preferences: {
+          theme: 'light',
+          notifications: {
+            email: true,
+            push: true
+          }
+        }
       }
     ]);
     console.log('일반 사용자 계정이 생성되었습니다.');
