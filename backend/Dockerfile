@@ -61,4 +61,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:${PORT}/health || exit 1
 
 # 앱 실행
-CMD ["npm", "start"] 
+CMD ["sh", "-c", "trap 'exit 0' SIGTERM; node src/index.js"] 
