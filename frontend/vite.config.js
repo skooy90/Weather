@@ -1,17 +1,15 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import terser from '@rollup/plugin-terser';
 
 export default defineConfig({
   plugins: [
-    react(),
-    terser()
+    react()
   ],
   server: {
-    port: 3000,
+    port: parseInt(process.env.PORT) || 3000,
     proxy: {
       '/api': {
-        target: 'https://weather-backend-knii.onrender.com',
+        target: process.env.VITE_API_URL || 'https://weather-backend-knii.onrender.com',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, '')
