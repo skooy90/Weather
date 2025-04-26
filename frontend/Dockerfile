@@ -60,9 +60,11 @@ RUN mkdir -p /var/run && \
     chmod -R 755 /var/lib/nginx && \
     chmod -R 755 /usr/share/nginx/html && \
     touch /var/run/nginx.pid && \
-    chown -R nginx:nginx /var/run/nginx.pid && \
-    chmod 644 /etc/nginx/nginx.conf
+    chown nginx:nginx /var/run/nginx.pid && \
+    chmod 644 /etc/nginx/nginx.conf && \
+    chmod 644 /etc/nginx/conf.d/default.conf
 
+# Nginx 사용자로 전환
 USER nginx
 
 # Render의 PORT 환경 변수 사용
