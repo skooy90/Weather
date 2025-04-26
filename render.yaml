@@ -10,7 +10,7 @@ services:
     healthCheckPath: /healthz
     envVars:
       - key: PORT
-        value: 10000
+        value: 3000
       - key: VITE_API_URL
         value: https://weather-backend-knii.onrender.com/api
       - key: VITE_ENV
