@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   backend:
-    build: .
+    build: /opt/render/project/src/backend
     ports:
       - "10000:10000"
     environment:
@@ -13,7 +13,7 @@ services:
       - app-network
 
   frontend:
-    build: ../frontend
+    build: /opt/render/project/src/frontend
     ports:
       - "80:80"
     depends_on:

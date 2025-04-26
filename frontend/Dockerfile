@@ -7,6 +7,9 @@ WORKDIR /app
 # 패키지 파일 복사
 COPY package*.json ./
 
+# 사용자 설정
+USER root
+
 # 의존성 설치 및 권한 설정
 RUN npm install && \
     chmod -R 755 /app/node_modules/.bin
