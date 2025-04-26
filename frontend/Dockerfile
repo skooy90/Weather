@@ -1,5 +1,5 @@
-# Node.js 개발 서버 실행을 위한 이미지
-FROM node:20-alpine
+# Node.js 빌드를 위한 이미지
+FROM node:20-alpine AS builder
 
 # 작업 디렉토리 설정
 WORKDIR /app
@@ -13,15 +13,20 @@ RUN npm install
 # 소스 코드 복사
 COPY . .
 
-# 권한 설정
-RUN chown -R node:node /app && \
-    chmod -R 755 /app/node_modules/.bin
+# 빌드 실행
+RUN npm run build
 
-# node 사용자로 전환
-USER node
+# 최종 이미지
+FROM nginx:alpine
 
-# 포트 노출
-EXPOSE 3000
+# 빌드된 파일 복사
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-# 개발 서버 실행
-CMD ["npm", "run", "dev", "--", "--host"] 
+# nginx 설정 복사
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# 80번 포트 노출
+EXPOSE 80
+
+# nginx 실행
+CMD ["nginx", "-g", "daemon off;"] 
