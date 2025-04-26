@@ -28,11 +28,12 @@ RUN npm run build
 # 최종 이미지
 FROM nginx:alpine
 
+# nginx 설정 파일 복사
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 # 빌드된 파일 복사
 COPY --from=builder /app/dist /usr/share/nginx/html
-
-# nginx 설정 복사
-COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # 80번 포트 노출
 EXPOSE 80
