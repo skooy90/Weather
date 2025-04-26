@@ -1,26 +1,17 @@
 # 빌드 스테이지
-FROM node:18-alpine as builder
+FROM node:20-alpine as builder
 WORKDIR /app
 
 # 패키지 파일 복사 및 의존성 설치
 COPY package*.json ./
-RUN if [ ! -f package.json ]; then echo "package.json not found" && exit 1; fi && \
-    npm install
+RUN npm install
 
-# 소스 코드 복사 및 확인
-RUN mkdir -p public src
-COPY ./public/. ./public/
-COPY ./src/. ./src/
-COPY ./vite.config.js ./
-COPY ./index.html ./
+# 소스 코드 복사
+COPY . .
 
-# 필수 파일 존재 확인
-RUN if [ ! -f vite.config.js ]; then echo "vite.config.js not found" && exit 1; fi && \
-    if [ ! -f index.html ]; then echo "index.html not found" && exit 1; fi && \
-    if [ ! -d src ]; then echo "src directory not found" && exit 1; fi
-
-# 환경 변수 파일 복사 (있는 경우)
-COPY ./.env* ./
+# 환경 변수 설정
+ENV NODE_ENV=production
+ENV VITE_API_URL=${API_URL:-https://weather-backend-knii.onrender.com}
 
 # 빌드 실행
 RUN npm run build
@@ -37,9 +28,8 @@ COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
 RUN sed -i "s/listen 10000/listen ${PORT:-10000}/g" /etc/nginx/conf.d/default.conf && \
     sed -i "s|proxy_pass https://weather-backend-knii.onrender.com|proxy_pass ${API_URL:-https://weather-backend-knii.onrender.com}|g" /etc/nginx/conf.d/default.conf
 
-# 빌드된 파일 복사 및 확인
-COPY --from=builder /app/dist/ /usr/share/nginx/html/
-RUN if [ ! -d /usr/share/nginx/html/assets ]; then echo "Build files not found" && exit 1; fi
+# 빌드된 파일 복사
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 # 권한 설정
 RUN mkdir -p /var/run && \
