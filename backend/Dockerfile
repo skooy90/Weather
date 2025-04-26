@@ -25,7 +25,7 @@ RUN apk add --no-cache curl
 # 작업 디렉토리 설정
 WORKDIR /app
 
-# 패키지 파일 복사
+# 소스 코드 및 의존성 복사
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/src ./src
 COPY --from=builder /app/package*.json ./
@@ -34,6 +34,11 @@ COPY --from=builder /app/package*.json ./
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV MONGODB_URI=mongodb+srv://skooy:Nebuw399XaI8yamb@skyman.r0gqkcz.mongodb.net/weather?retryWrites=true&w=majority&appName=SkyMan
+
+# .env 파일 생성
+RUN echo "NODE_ENV=production" > .env && \
+    echo "PORT=3000" >> .env && \
+    echo "MONGODB_URI=mongodb+srv://skooy:Nebuw399XaI8yamb@skyman.r0gqkcz.mongodb.net/weather?retryWrites=true&w=majority&appName=SkyMan" >> .env
 
 # 데이터베이스 시딩 실행
 RUN echo "데이터베이스 시딩을 시작합니다..." && \

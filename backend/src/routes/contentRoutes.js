@@ -7,10 +7,14 @@ const auth = require('../middleware/userAuth');
 router.get('/', contentController.getAllContents);
 
 // 카테고리별 컨텐츠 조회
-router.get('/category/:category', contentController.getContentsByCategory);
+router.get('/category/:categoryId', contentController.getContentsByCategory);
+router.get('/category/:categoryId/subcategory/:subcategoryId', contentController.getContentsByCategory);
 
 // 특정 컨텐츠 조회
 router.get('/:id', contentController.getContentById);
+
+// 자동 콘텐츠 생성
+router.post('/generate', contentController.generateContents);
 
 // 컨텐츠 생성 (관리자만)
 router.post('/', auth, contentController.createContent);

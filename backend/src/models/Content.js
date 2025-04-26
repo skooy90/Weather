@@ -6,20 +6,26 @@ const contentSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
-  description: {
+  author: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  content: {
     type: String,
     required: true
   },
   category: {
-    type: String,
-    required: true,
-    enum: ['ai-tech', 'digital-nomad', 'self-improvement', 'side-hustle', 'outdoor']
-  },
-  image: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category',
     required: true
   },
-  date: {
+  subcategory: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Subcategory',
+    required: true
+  },
+  image: {
     type: String,
     required: true
   },
@@ -32,10 +38,51 @@ const contentSchema = new mongoose.Schema({
     default: 0
   },
   comments: [{
-    user: String,
-    text: String,
-    date: String
-  }]
+    author: String,
+    content: String,
+    createdAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+  tags: [{
+    type: String,
+    trim: true
+  }],
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
+  },
+  status: {
+    type: String,
+    enum: ['draft', 'published', 'archived'],
+    default: 'published'
+  },
+  isTrending: {
+    type: Boolean,
+    default: false
+  },
+  isFeatured: {
+    type: Boolean,
+    default: false
+  }
+});
+
+// 인덱스 설정
+contentSchema.index({ category: 1, subcategory: 1 });
+contentSchema.index({ createdAt: -1 });
+contentSchema.index({ views: -1 });
+contentSchema.index({ likes: -1 });
+contentSchema.index({ tags: 1 });
+
+// 업데이트 시 updatedAt 필드 자동 갱신
+contentSchema.pre('save', function(next) {
+  this.updatedAt = Date.now();
+  next();
 });
 
 module.exports = mongoose.model('Content', contentSchema); 

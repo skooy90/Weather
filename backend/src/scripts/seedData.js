@@ -5,11 +5,8 @@
 
 const mongoose = require('mongoose');
 require('dotenv').config();
-const Product = require('../models/Product');
-const ProductDetail = require('../models/ProductDetail');
 const Content = require('../models/Content');
 const User = require('../models/User');
-const Comment = require('../models/Comment');
 const bcrypt = require('bcryptjs');
 
 console.log('데이터베이스 연결을 시작합니다...');
@@ -26,127 +23,6 @@ mongoose.connect(process.env.MONGODB_URI)
   });
 
 /**
- * 초기 상품 데이터
- * @type {Array<Object>}
- */
-const products = [
-  {
-    name: "그린박신 스트롱",
-    price: 35000,
-    description: "더욱 강력한 그린박신 스트롱 앰플",
-    category: "앰플",
-    imageUrl: "/images/greenbacksin.jpg",
-    stock: 100,
-    status: "판매중"
-  }
-  // 추가 상품들...
-];
-
-/**
- * 초기 상품 상세 정보 데이터
- * @type {Array<Object>}
- */
-const productDetails = [
-  {
-    productId: null, // 상품 생성 후 ID 설정
-    specifications: {
-      "용량": "30ml",
-      "주요성분": "쿨링 특허 성분",
-      "사용기한": "제조일로부터 12개월"
-    },
-    features: [
-      {
-        title: "재생+보습",
-        description: "2배 Up↑"
-      },
-      {
-        title: "점성+온도",
-        description: "2배 Down↓"
-      }
-    ],
-    images: [
-      {
-        url: "/images/green_1.jpg",
-        alt: "그린박신 스트롱 상세 이미지 1"
-      },
-      {
-        url: "/images/green_2.jpg",
-        alt: "그린박신 스트롱 상세 이미지 2"
-      }
-    ]
-  }
-];
-
-/**
- * 초기 컨텐츠 데이터
- * @type {Array<Object>}
- */
-const dummyContents = [
-  {
-    title: "ChatGPT-5 출시 임박, 새로운 기능 미리보기",
-    category: "ai-tech",
-    description: "OpenAI가 곧 출시할 ChatGPT-5의 새로운 기능과 성능 개선사항을 알아봅니다.",
-    image: "https://source.unsplash.com/random/800x600/?ai,technology",
-    date: "2024-04-23",
-    views: 15234,
-    likes: 892,
-    comments: [
-      {
-        user: "tech_lover",
-        text: "정말 기대됩니다!",
-        date: "2024-04-23"
-      }
-    ]
-  },
-  {
-    title: "2024 재택근무 트렌드 리포트",
-    category: "digital-nomad",
-    description: "글로벌 기업들의 재택근무 현황과 미래 전망을 분석합니다.",
-    image: "https://source.unsplash.com/random/800x600/?remote,work",
-    date: "2024-04-22",
-    views: 12453,
-    likes: 731,
-    comments: [
-      {
-        user: "remote_worker",
-        text: "재택근무가 대세네요!",
-        date: "2024-04-22"
-      }
-    ]
-  },
-  {
-    title: "직장인 아침 루틴 만들기",
-    category: "self-improvement",
-    description: "바쁜 직장인을 위한 효율적인 아침 시간 활용법을 소개합니다.",
-    image: "https://source.unsplash.com/random/800x600/?morning,routine",
-    date: "2024-04-23",
-    views: 8234,
-    likes: 567,
-    comments: []
-  },
-  {
-    title: "월급 3배 만드는 부업 아이디어",
-    category: "side-hustle",
-    description: "직장인이 실천할 수 있는 현실적인 부업 방법을 알아봅니다.",
-    image: "https://source.unsplash.com/random/800x600/?business,work",
-    date: "2024-04-22",
-    views: 10234,
-    likes: 892,
-    comments: []
-  },
-  {
-    title: "주말 캠핑 초보 가이드",
-    category: "outdoor",
-    description: "캠핑 입문자를 위한 필수 준비물과 꿀팁을 소개합니다.",
-    image: "https://source.unsplash.com/random/800x600/?camping,nature",
-    date: "2024-04-23",
-    views: 5234,
-    likes: 345,
-    comments: []
-  }
-];
-
-/**
  * 데이터베이스 초기 데이터 생성 함수
  * @async
  * @function seedDatabase
@@ -157,7 +33,6 @@ async function seedDatabase() {
     console.log('기존 데이터 삭제를 시작합니다...');
     await User.deleteMany({});
     await Content.deleteMany({});
-    await Comment.deleteMany({});
     console.log('기존 데이터가 삭제되었습니다.');
 
     // 관리자 계정 생성
@@ -247,35 +122,6 @@ async function seedDatabase() {
       }
     ]);
     console.log('콘텐츠가 생성되었습니다.');
-
-    // 댓글 생성
-    await Comment.create([
-      {
-        content: '정말 기대됩니다!',
-        author: users[0]._id,
-        contentId: contents[0]._id,
-        status: '게시'
-      },
-      {
-        content: '좋은 정보 감사합니다.',
-        author: users[1]._id,
-        contentId: contents[0]._id,
-        status: '게시'
-      },
-      {
-        content: 'React 19가 정말 기대됩니다.',
-        author: users[0]._id,
-        contentId: contents[1]._id,
-        status: '게시'
-      },
-      {
-        content: '스마트폰 추천 감사합니다.',
-        author: users[1]._id,
-        contentId: contents[2]._id,
-        status: '숨김'
-      }
-    ]);
-    console.log('댓글이 생성되었습니다.');
 
     console.log('데이터베이스 시딩이 완료되었습니다.');
     process.exit(0);
