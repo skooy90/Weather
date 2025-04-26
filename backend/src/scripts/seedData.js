@@ -39,6 +39,8 @@ async function seedDatabase() {
     const adminPassword = await bcrypt.hash('qwe@123', 10);
     const admin = await User.create({
       name: '관리자',
+      username: 'admin',
+      userId: 'admin123',
       email: 'admin@example.com',
       password: adminPassword,
       phone: '010-1234-5678',
@@ -51,6 +53,8 @@ async function seedDatabase() {
     const users = await User.create([
       {
         name: '사용자1',
+        username: 'user1',
+        userId: 'user123',
         email: 'user1@example.com',
         password: userPassword,
         phone: '010-2345-6789',
@@ -58,6 +62,8 @@ async function seedDatabase() {
       },
       {
         name: '사용자2',
+        username: 'user2',
+        userId: 'user456',
         email: 'user2@example.com',
         password: userPassword,
         phone: '010-3456-7890',
