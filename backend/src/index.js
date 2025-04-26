@@ -26,6 +26,11 @@ mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('MongoDB 연결 성공'))
   .catch(err => console.error('MongoDB 연결 실패:', err));
 
+// 헬스체크 엔드포인트
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
 // 루트 경로 응답
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to the Weather API' });
@@ -44,7 +49,16 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: '서버 에러가 발생했습니다.' });
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+const PORT = process.env.PORT || 10000;
+const server = app.listen(PORT, () => {
   console.log(`서버가 포트 ${PORT}에서 실행 중입니다.`);
+});
+
+// 시그널 핸들링
+process.on('SIGTERM', () => {
+  console.log('SIGTERM 시그널을 받았습니다. 서버를 종료합니다...');
+  server.close(() => {
+    console.log('서버가 종료되었습니다.');
+    process.exit(0);
+  });
 }); 
