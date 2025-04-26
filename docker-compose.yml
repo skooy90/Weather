@@ -1,4 +1,41 @@
 version: '3.8'
+<<<<<<< HEAD
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT:-10000}:${PORT:-10000}"
+    environment:
+      - PORT=${PORT:-10000}
+      - VITE_API_URL=${VITE_API_URL:-http://localhost:3000/api}
+      - NODE_ENV=production
+      - VITE_ENV=production
+      - VITE_CACHE_TIME=3600
+      - VITE_LOG_LEVEL=info
+      - VITE_ENABLE_AUTH=true
+      - VITE_ENABLE_CART=true
+      - VITE_SITE_NAME=KYSong Store
+      - VITE_CONTACT_EMAIL=support@kysong.store
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - ./logs:/var/log/nginx
+    depends_on:
+      - backend
+    restart: unless-stopped
+  backend:
+    image: backend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - frontend
+    restart: unless-stopped 
+=======
 
 services:
   mongodb:
@@ -43,3 +80,4 @@ volumes:
 networks:
   weather_network:
     driver: bridge 
+>>>>>>> 1aa7b0d965b753291e7a67c33949ce435a144791
