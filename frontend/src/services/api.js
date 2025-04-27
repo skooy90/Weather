@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'https://weather-backend-knii.onrender.com';
+const API_URL = process.env.REACT_APP_API_URL || 'https://weather-backend-knii.onrender.com/api';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -57,47 +57,47 @@ api.interceptors.response.use(
 // 컨텐츠 관련 API
 export const contentApi = {
   // 모든 컨텐츠 조회
-  getAllContents: () => api.get('/contents'),
+  getAllContents: () => api.get('/api/contents'),
   
   // 카테고리 목록 조회
-  getCategories: () => api.get('/categories'),
+  getCategories: () => api.get('/api/categories'),
   
   // 카테고리별 컨텐츠 조회
-  getContentsByCategory: (category) => api.get(`/contents/category/${category}`),
+  getContentsByCategory: (category) => api.get(`/api/contents/category/${category}`),
   
   // 서브카테고리별 컨텐츠 조회
   getContentsBySubcategory: (category, subcategory) => 
-    api.get(`/contents/category/${category}/subcategory/${subcategory}`),
+    api.get(`/api/contents/category/${category}/subcategory/${subcategory}`),
   
   // 특정 컨텐츠 조회
-  getContentById: (id) => api.get(`/contents/${id}`),
+  getContentById: (id) => api.get(`/api/contents/${id}`),
   
   // 자동 콘텐츠 생성
-  generateContents: () => api.post('/contents/generate'),
+  generateContents: () => api.post('/api/contents/generate'),
   
   // 트렌딩 컨텐츠 조회
-  getTrendingContents: () => api.get('/contents/trending'),
+  getTrendingContents: () => api.get('/api/contents/trending'),
   
   // 추천 컨텐츠 조회
-  getFeaturedContents: () => api.get('/contents/featured'),
+  getFeaturedContents: () => api.get('/api/contents/featured'),
   
   // 컨텐츠 생성
-  createContent: (data) => api.post('/contents', data),
+  createContent: (data) => api.post('/api/contents', data),
   
   // 컨텐츠 수정
-  updateContent: (id, data) => api.put(`/contents/${id}`, data),
+  updateContent: (id, data) => api.put(`/api/contents/${id}`, data),
   
   // 컨텐츠 삭제
-  deleteContent: (id) => api.delete(`/contents/${id}`),
+  deleteContent: (id) => api.delete(`/api/contents/${id}`),
   
   // 댓글 추가
-  addComment: (contentId, comment) => api.post(`/contents/${contentId}/comments`, comment),
+  addComment: (contentId, comment) => api.post(`/api/contents/${contentId}/comments`, comment),
   
   // 댓글 수정
-  updateComment: (contentId, commentId, data) => api.put(`/contents/${contentId}/comments/${commentId}`, data),
+  updateComment: (contentId, commentId, data) => api.put(`/api/contents/${contentId}/comments/${commentId}`, data),
   
   // 댓글 삭제
-  deleteComment: (contentId, commentId) => api.delete(`/contents/${contentId}/comments/${commentId}`),
+  deleteComment: (contentId, commentId) => api.delete(`/api/contents/${contentId}/comments/${commentId}`),
 };
 
 // 인증 관련 API
