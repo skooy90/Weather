@@ -30,6 +30,9 @@ COPY --from=builder /app/dist ./dist
 # 로그 디렉토리 생성
 RUN mkdir -p /app/logs
 
+# 업로드 디렉토리 생성
+RUN mkdir -p /app/uploads
+
 # Set environment variables
 ENV NODE_ENV=production
 ENV PORT=10000
