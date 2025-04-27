@@ -16,6 +16,9 @@ RUN npm install
 # 소스 코드 복사
 COPY . .
 
+# TypeScript 컴파일
+RUN npm run build
+
 # 프로덕션 스테이지
 FROM node:18-alpine
 
@@ -27,7 +30,7 @@ WORKDIR /app
 
 # 소스 코드 및 의존성 복사
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/src ./src
+COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package*.json ./
 
 # 환경 변수 설정
@@ -61,4 +64,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:${PORT}/health || exit 1
 
 # 앱 실행
-CMD ["sh", "-c", "trap 'exit 0' SIGTERM; node src/index.js"] 
+CMD ["node", "dist/main"] 

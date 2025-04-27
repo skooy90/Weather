@@ -1,3 +1,5 @@
+import apiClient from './client';
+
 // 임시 관리자 계정 정보
 const adminAccount = {
   id: 'admin',
@@ -8,33 +10,34 @@ const adminAccount = {
 
 // 로그인 API
 export const login = async (credentials) => {
-  // 실제 API 호출 대신 임시 구현
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (credentials.id === adminAccount.id && credentials.password === adminAccount.password) {
-        resolve({
-          success: true,
-          user: {
-            id: adminAccount.id,
-            name: adminAccount.name,
-            role: adminAccount.role
-          }
-        });
-      } else {
-        reject({
-          success: false,
-          message: '아이디 또는 비밀번호가 일치하지 않습니다.'
-        });
-      }
-    }, 500); // API 호출 지연 시간
-  });
+  try {
+    const response = await apiClient.post('/auth/login', credentials);
+    if (response.data.token) {
+      localStorage.setItem('token', response.data.token);
+    }
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: '로그인 중 오류가 발생했습니다.' };
+  }
 };
 
 // 로그아웃 API
 export const logout = async () => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({ success: true });
-    }, 500);
-  });
+  try {
+    const response = await apiClient.post('/auth/logout');
+    localStorage.removeItem('token');
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: '로그아웃 중 오류가 발생했습니다.' };
+  }
+};
+
+// 토큰 검증 API
+export const verifyToken = async () => {
+  try {
+    const response = await apiClient.get('/auth/verify');
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: '토큰 검증 중 오류가 발생했습니다.' };
+  }
 }; 

@@ -1,3 +1,5 @@
+import apiClient from './client';
+
 // 임시 데이터
 const mockContents = {
   'trend-1': {
@@ -192,20 +194,21 @@ const mockContents = {
 };
 
 // API 함수들
+export const getAllContents = async () => {
+  try {
+    const response = await apiClient.get('/contents');
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: '컨텐츠 조회 중 오류가 발생했습니다.' };
+  }
+};
+
 export const getContentById = async (id) => {
   try {
-    // 실제 API가 구현되면 여기서 API 호출을 수행할 수 있습니다.
-    // 현재는 mock 데이터를 사용합니다.
-    const content = mockContents[id];
-    
-    if (!content) {
-      throw new Error('Content not found');
-    }
-    
-    return content;
+    const response = await apiClient.get(`/contents/${id}`);
+    return response.data;
   } catch (error) {
-    console.error('Error fetching content:', error);
-    throw error;
+    throw error.response?.data || { message: '컨텐츠 상세 조회 중 오류가 발생했습니다.' };
   }
 };
 
@@ -231,28 +234,38 @@ export const getContentsByCategory = async (category) => {
   }
 };
 
-export const addComment = async (contentId, comment, author) => {
+export const addComment = async (contentId, comment) => {
   try {
-    const content = mockContents[contentId];
-    if (!content) {
-      throw new Error('Content not found');
-    }
-
-    const newComment = {
-      id: Date.now().toString(),
-      author: author,
-      content: comment,
-      createdAt: new Date().toISOString()
-    };
-
-    if (!content.comments) {
-      content.comments = [];
-    }
-    content.comments.push(newComment);
-
-    return newComment;
+    const response = await apiClient.post(`/contents/${contentId}/comments`, comment);
+    return response.data;
   } catch (error) {
-    console.error('Error adding comment:', error);
-    throw error;
+    throw error.response?.data || { message: '댓글 추가 중 오류가 발생했습니다.' };
+  }
+};
+
+export const addContent = async (content) => {
+  try {
+    const response = await apiClient.post('/contents', content);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: '컨텐츠 추가 중 오류가 발생했습니다.' };
+  }
+};
+
+export const updateContent = async (id, content) => {
+  try {
+    const response = await apiClient.put(`/contents/${id}`, content);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: '컨텐츠 수정 중 오류가 발생했습니다.' };
+  }
+};
+
+export const deleteContent = async (id) => {
+  try {
+    const response = await apiClient.delete(`/contents/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: '컨텐츠 삭제 중 오류가 발생했습니다.' };
   }
 }; 
