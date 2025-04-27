@@ -92,6 +92,8 @@ const Header = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
+  console.log('Header 렌더링:', { user, theme });
+
   const handleAuth = () => {
     if (user) {
       logout();
@@ -116,7 +118,7 @@ const Header = () => {
             {theme === 'dark' ? <FaSun /> : <FaMoon />}
           </ThemeButton>
           {!user && (
-            <RegisterButton onClick={() => navigate('/register')} theme={theme}>
+            <RegisterButton onClick={() => navigate('/signup')} theme={theme}>
               <FaUserPlus /> 회원가입
             </RegisterButton>
           )}

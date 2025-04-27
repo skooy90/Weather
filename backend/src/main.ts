@@ -6,35 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { UserService } from './user/user.service';
 import { ContentService } from './content/content.service';
 import { NestExpressApplication } from '@nestjs/platform-express';
-
-async function seedDatabase(userService: UserService, contentService: ContentService) {
-  try {
-    // 관리자 계정 생성
-    const adminUser = await userService.findByUsername('admin');
-    if (!adminUser) {
-      await userService.create({
-        username: 'admin',
-        password: 'admin123',
-        email: 'admin@example.com',
-        role: 'admin'
-      });
-      console.log('관리자 계정이 생성되었습니다.');
-    }
-
-    // 테스트 콘텐츠 생성
-    const contents = await contentService.findAll();
-    if (contents.length === 0) {
-      await contentService.create({
-        title: '환영합니다',
-        content: '첫 번째 게시글입니다.',
-        author: 'admin'
-      });
-      console.log('테스트 콘텐츠가 생성되었습니다.');
-    }
-  } catch (error) {
-    console.error('시드 데이터 생성 중 오류가 발생했습니다:', error);
-  }
-}
+import { seedDatabase } from './seed';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);

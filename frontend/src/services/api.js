@@ -1,16 +1,16 @@
 import axios from 'axios';
 
-// Nginx 프록시를 통해 API 요청을 보내도록 상대 경로 사용
-const API_URL = '/api';
+const API_URL = process.env.REACT_APP_API_URL || 'https://weather-backend-knii.onrender.com';
 
 const api = axios.create({
   baseURL: API_URL,
+  timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// 요청 인터셉터 - 토큰 추가
+// 요청 인터셉터
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -24,13 +24,31 @@ api.interceptors.request.use(
   }
 );
 
-// 응답 인터셉터 - 에러 처리
+// 응답 인터셉터
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      window.location.href = '/login';
+    if (error.response) {
+      // 서버가 응답을 반환했지만 상태 코드가 2xx가 아닌 경우
+      console.error('API 응답 에러:', error.response.status, error.response.data);
+      
+      // 401 Unauthorized 에러 처리
+      if (error.response.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+      }
+      
+      // 508 에러 처리
+      if (error.response.status === 508) {
+        console.error('서버 리소스 제한에 도달했습니다. 잠시 후 다시 시도해주세요.');
+      }
+    } else if (error.request) {
+      // 요청은 보냈지만 응답을 받지 못한 경우
+      console.error('API 요청 에러:', error.request);
+    } else {
+      // 요청을 보내기 전에 발생한 에러
+      console.error('API 에러:', error.message);
     }
     return Promise.reject(error);
   }
@@ -88,10 +106,7 @@ export const authApi = {
   login: (credentials) => api.post('/auth/login', credentials),
   
   // 로그아웃
-  logout: () => {
-    localStorage.removeItem('token');
-    return Promise.resolve();
-  },
+  logout: () => api.post('/auth/logout'),
   
   // 회원가입
   register: (userData) => api.post('/auth/register', userData),
