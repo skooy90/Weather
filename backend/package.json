@@ -44,7 +44,7 @@
     "@types/jest": "^29.5.2",
     "@types/node": "^20.3.1",
     "@types/passport-jwt": "^3.0.8",
-    "@types/passport-local": "^1.7.0",
+    "@types/passport-local": "^1.0.1",
     "@types/bcrypt": "^5.0.0",
     "@types/supertest": "^2.0.12",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
@@ -64,7 +64,10 @@
     "rimraf": "^5.0.5",
     "npmlog": "^7.0.1",
     "are-we-there-yet": "^3.0.0",
-    "gauge": "^4.0.4"
+    "gauge": "^4.0.4",
+    "winston": "^3.11.0",
+    "winston-daily-rotate-file": "^4.7.1",
+    "npm": "^10.2.4"
   },
   "jest": {
     "moduleFileExtensions": [
