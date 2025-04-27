@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { FaSun, FaMoon, FaUser } from 'react-icons/fa';
+import { FaSun, FaMoon, FaUser, FaUserPlus } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 import { ThemeContext } from '../../context/ThemeContext';
 
@@ -61,7 +61,7 @@ const ThemeButton = styled.button`
   gap: 0.5rem;
 `;
 
-const LoginButton = styled.button`
+const AuthButton = styled.button`
   background-color: ${props => props.theme === 'dark' ? '#4299e1' : '#2b6cb0'};
   color: white;
   border: none;
@@ -76,6 +76,14 @@ const LoginButton = styled.button`
 
   &:hover {
     background-color: ${props => props.theme === 'dark' ? '#3182ce' : '#2c5282'};
+  }
+`;
+
+const RegisterButton = styled(AuthButton)`
+  background-color: ${props => props.theme === 'dark' ? '#38a169' : '#2f855a'};
+  
+  &:hover {
+    background-color: ${props => props.theme === 'dark' ? '#2f855a' : '#276749'};
   }
 `;
 
@@ -107,9 +115,14 @@ const Header = () => {
           <ThemeButton onClick={toggleTheme} theme={theme}>
             {theme === 'dark' ? <FaSun /> : <FaMoon />}
           </ThemeButton>
-          <LoginButton onClick={handleAuth} theme={theme}>
+          {!user && (
+            <RegisterButton onClick={() => navigate('/register')} theme={theme}>
+              <FaUserPlus /> 회원가입
+            </RegisterButton>
+          )}
+          <AuthButton onClick={handleAuth} theme={theme}>
             <FaUser /> {user ? '로그아웃' : '로그인'}
-          </LoginButton>
+          </AuthButton>
         </Nav>
       </HeaderContent>
     </HeaderContainer>

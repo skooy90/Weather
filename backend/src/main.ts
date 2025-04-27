@@ -6,7 +6,6 @@ import { ConfigService } from '@nestjs/config';
 import { UserService } from './user/user.service';
 import { ContentService } from './content/content.service';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { join } from 'path';
 
 async function seedDatabase(userService: UserService, contentService: ContentService) {
   try {
@@ -39,9 +38,6 @@ async function seedDatabase(userService: UserService, contentService: ContentSer
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  
-  // 정적 파일 서비스 설정
-  app.useStaticAssets(join(__dirname, '..', 'public'));
   
   // 전역 파이프 설정
   app.useGlobalPipes(new ValidationPipe({
