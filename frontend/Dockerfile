@@ -22,11 +22,8 @@ RUN npm rebuild esbuild
 # npm scripts 실행에 필요한 바이너리 파일에 실행권한 부여
 RUN chmod -R +x /app/node_modules/.bin
 
-# favicon 생성 스크립트 실행 권한 부여
-RUN chmod +x /app/scripts/generate-favicon.sh
-
-# favicon 생성
-RUN ./scripts/generate-favicon.sh
+# favicon 생성 스크립트 실행 권한 부여 및 실행
+RUN cd /app && chmod +x scripts/generate-favicon.sh && sh scripts/generate-favicon.sh
 
 # 빌드 실행
 RUN npm run build

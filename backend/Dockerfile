@@ -11,7 +11,8 @@ WORKDIR /app
 COPY package*.json ./
 
 # 모든 의존성 설치 (개발 의존성 포함)
-RUN npm install
+RUN npm install && \
+    npm install --save-dev @types/passport-local
 
 # 소스 코드 복사
 COPY . .
