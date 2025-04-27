@@ -63,11 +63,6 @@ async function bootstrap() {
   // CORS 설정
   app.enableCors();
 
-  // 기본 경로 핸들러
-  app.get('/', (req, res) => {
-    res.sendFile(join(__dirname, '..', 'public', 'index.html'));
-  });
-
   // 서비스 인스턴스 가져오기
   const userService = app.get(UserService);
   const contentService = app.get(ContentService);
