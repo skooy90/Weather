@@ -5,6 +5,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from './user/user.service';
 import { ContentService } from './content/content.service';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 
 async function seedDatabase(userService: UserService, contentService: ContentService) {
   try {
@@ -36,7 +38,10 @@ async function seedDatabase(userService: UserService, contentService: ContentSer
 }
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  
+  // 정적 파일 서비스 설정
+  app.useStaticAssets(join(__dirname, '..', 'public'));
   
   // 전역 파이프 설정
   app.useGlobalPipes(new ValidationPipe({
@@ -57,6 +62,11 @@ async function bootstrap() {
 
   // CORS 설정
   app.enableCors();
+
+  // 기본 경로 핸들러
+  app.get('/', (req, res) => {
+    res.sendFile(join(__dirname, '..', 'public', 'index.html'));
+  });
 
   // 서비스 인스턴스 가져오기
   const userService = app.get(UserService);
