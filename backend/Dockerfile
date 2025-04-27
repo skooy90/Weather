@@ -33,6 +33,7 @@ WORKDIR /app
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/src/scripts ./src/scripts
 
 # 환경 변수 설정
 ENV NODE_ENV=production
@@ -43,6 +44,9 @@ ENV MONGODB_URI=mongodb+srv://skooy:Nebuw399XaI8yamb@skyman.r0gqkcz.mongodb.net/
 RUN echo "NODE_ENV=production" > .env && \
     echo "PORT=10000" >> .env && \
     echo "MONGODB_URI=mongodb+srv://skooy:Nebuw399XaI8yamb@skyman.r0gqkcz.mongodb.net/weather?retryWrites=true&w=majority&appName=SkyMan" >> .env
+
+# 시딩 스크립트 실행을 위한 의존성 설치
+RUN npm install dotenv mongoose bcryptjs
 
 # 데이터베이스 시딩 실행
 RUN echo "데이터베이스 시딩을 시작합니다..." && \
