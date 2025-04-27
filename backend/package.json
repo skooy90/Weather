@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Weather Backend API",
   "main": "src/main.ts",
+  "author": "",
+  "private": true,
+  "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\"",
@@ -34,7 +37,9 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "winston": "^3.11.0",
+    "winston-daily-rotate-file": "^4.7.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
@@ -65,8 +70,6 @@
     "npmlog": "^7.0.1",
     "are-we-there-yet": "^3.0.0",
     "gauge": "^4.0.4",
-    "winston": "^3.11.0",
-    "winston-daily-rotate-file": "^4.7.1",
     "npm": "^10.2.4"
   },
   "jest": {
