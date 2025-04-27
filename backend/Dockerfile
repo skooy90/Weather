@@ -7,7 +7,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm install @nestjs/common @nestjs/mongoose mongoose @nestjs/platform-express @nestjs/swagger @types/multer
 
 # Copy source code
 COPY . .
@@ -22,7 +22,7 @@ WORKDIR /app
 
 # Copy package files and install production dependencies
 COPY package*.json ./
-RUN npm install --production
+RUN npm install --production @nestjs/common @nestjs/mongoose mongoose @nestjs/platform-express @nestjs/swagger @types/multer
 
 # Copy compiled files from builder
 COPY --from=builder /app/dist ./dist
