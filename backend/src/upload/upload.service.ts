@@ -9,8 +9,8 @@ import { Upload, UploadDocument, UploadType, ImageSubType, DocumentSubType, Medi
 @Injectable()
 export class UploadService {
   constructor(
-    private configService: ConfigService,
-    @InjectModel(Upload.name) private uploadModel: Model<UploadDocument>,
+    private readonly configService: ConfigService,
+    @InjectModel(Upload.name) private readonly uploadModel: Model<UploadDocument>
   ) {}
 
   private getUploadPath(type: UploadType, subType: string): string {
