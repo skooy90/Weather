@@ -17,6 +17,20 @@ async function bootstrap() {
   
   const configService = app.get(ConfigService);
 
+  // CSP 헤더 설정
+  app.use((req: Request, res: Response, next) => {
+    res.setHeader(
+      'Content-Security-Policy',
+      "default-src 'self'; " +
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; " +
+      "style-src 'self' 'unsafe-inline' https://unpkg.com; " +
+      "connect-src 'self' https://weather-backend-knii.onrender.com; " +
+      "img-src 'self' data: https:; " +
+      "font-src 'self' data: https:;"
+    );
+    next();
+  });
+
   // 루트 경로 핸들러 추가
   app.getHttpAdapter().get('/', (req: Request, res: Response) => {
     res.redirect('/api');
