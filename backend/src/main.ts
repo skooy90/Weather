@@ -3,10 +3,13 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
-import { NestApplication } from '@nestjs/core';
+import { NestFastifyApplication, FastifyAdapter } from '@nestjs/platform-fastify';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestApplication>(AppModule);
+  const app = await NestFactory.create<NestFastifyApplication>(
+    AppModule,
+    new FastifyAdapter()
+  );
   const configService = app.get(ConfigService);
 
   // 전역 파이프 설정
@@ -33,7 +36,7 @@ async function bootstrap() {
   });
 
   const port = configService.get('PORT') || 10000;
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
   console.log(`Application is running on: http://localhost:${port}`);
 }
 bootstrap(); 
