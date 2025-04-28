@@ -1,14 +1,14 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Category } from '../schemas/category.schema';
+import { Category } from '../models/Category';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class CategorySeeder implements OnModuleInit {
   constructor(
     @InjectModel(Category.name) private readonly categoryModel: Model<Category>,
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService
   ) {}
 
   async onModuleInit() {
@@ -17,7 +17,7 @@ export class CategorySeeder implements OnModuleInit {
     }
   }
 
-  private async seedCategories() {
+  public async seedCategories() {
     const categories = this.configService.get('DEFAULT_CATEGORIES') || [
       { name: '일반', description: '일반 게시글' },
       { name: '공지사항', description: '공지사항' },
@@ -33,10 +33,10 @@ export class CategorySeeder implements OnModuleInit {
   }
 }
 
-export const seedCategories = async (categoryModel: Model<Category>) => {
-  if (!categoryModel) {
-    throw new Error('Category model is required for seeding');
+export const seedCategories = async (categoryModel: Model<Category>, configService: ConfigService) => {
+  if (!categoryModel || !configService) {
+    throw new Error('Category model and ConfigService are required for seeding');
   }
-  const seeder = new CategorySeeder(categoryModel);
+  const seeder = new CategorySeeder(categoryModel, configService);
   await seeder.seedCategories();
 }; 

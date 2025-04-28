@@ -4,14 +4,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Upload } from './schemas/upload.schema';
-import { UploadType, UploadSubType } from './schemas/upload.schema';
+import { Upload, UploadDocument, UploadType } from './schemas/upload.schema';
 
 @Injectable()
 export class UploadService {
   constructor(
     private readonly configService: ConfigService,
-    @InjectModel(Upload.name) private readonly uploadModel: Model<Upload>,
+    @InjectModel(Upload.name) private readonly uploadModel: Model<UploadDocument>,
   ) {
     this.ensureUploadDirectories();
   }
@@ -33,52 +32,32 @@ export class UploadService {
     });
   }
 
-  private getUploadPath(type: UploadType, subType?: UploadSubType): string {
+  private getUploadPath(type: UploadType): string {
     const baseDir = process.env.UPLOAD_DIR || '/tmp/uploads';
-    switch (type) {
-      case UploadType.IMAGE:
-        return path.join(baseDir, 'images', subType || 'post');
-      case UploadType.DOCUMENT:
-        return path.join(baseDir, 'documents');
-      case UploadType.MEDIA:
-        return path.join(baseDir, 'media');
-      default:
-        return path.join(baseDir, 'others');
-    }
+    return path.join(baseDir, type);
   }
 
-  async saveFile(
-    file: Express.Multer.File,
-    userId: string,
-    type: UploadType,
-    subType?: UploadSubType,
-  ): Promise<Upload> {
-    try {
-      const uploadDir = this.getUploadPath(type, subType);
-      const filename = `${Date.now()}-${file.originalname}`;
-      const filepath = path.join(uploadDir, filename);
+  async saveFile(file: Express.Multer.File, userId: string, type: UploadType): Promise<Upload> {
+    const uploadDir = this.getUploadPath(type);
+    const fileName = `${Date.now()}-${file.originalname}`;
+    const filePath = path.join(uploadDir, fileName);
 
-      if (!fs.existsSync(uploadDir)) {
-        fs.mkdirSync(uploadDir, { recursive: true });
-      }
-
-      fs.writeFileSync(filepath, file.buffer);
-
-      const upload = new this.uploadModel({
-        originalName: file.originalname,
-        path: filepath,
-        type,
-        subType,
-        size: file.size,
-        uploadedBy: userId,
-        mimeType: file.mimetype,
-      });
-
-      return await upload.save();
-    } catch (error) {
-      console.error('파일 저장 실패:', error);
-      throw error;
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
     }
+
+    fs.writeFileSync(filePath, file.buffer);
+
+    const upload = new this.uploadModel({
+      originalName: file.originalname,
+      path: filePath,
+      type,
+      size: file.size,
+      uploadedBy: userId,
+      mimeType: file.mimetype
+    });
+
+    return upload.save();
   }
 
   async deleteFile(id: string): Promise<void> {

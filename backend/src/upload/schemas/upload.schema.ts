@@ -4,26 +4,9 @@ import { Document } from 'mongoose';
 export type UploadDocument = Upload & Document;
 
 export enum UploadType {
-  IMAGE = 'image',
-  DOCUMENT = 'document',
-  MEDIA = 'media',
-}
-
-export enum ImageSubType {
   PROFILE = 'profile',
-  POST = 'post',
-  BANNER = 'banner',
-}
-
-export enum DocumentSubType {
-  PDF = 'pdf',
-  DOC = 'doc',
-  XLS = 'xls',
-}
-
-export enum MediaSubType {
-  VIDEO = 'video',
-  AUDIO = 'audio',
+  CONTENT = 'content',
+  THUMBNAIL = 'thumbnail'
 }
 
 @Schema({ timestamps: true })
@@ -36,9 +19,6 @@ export class Upload {
 
   @Prop({ required: true, enum: UploadType })
   type: UploadType;
-
-  @Prop({ required: true })
-  subType: string;
 
   @Prop({ required: true })
   size: number;
