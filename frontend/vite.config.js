@@ -1,32 +1,38 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import path from 'path';
 
 export default defineConfig({
-  plugins: [
-    react()
-  ],
-  server: {
-    proxy: {
-      '/api': {
-        target: process.env.NODE_ENV === 'production' 
-          ? 'https://weather-backend-knii.onrender.com'
-          : 'http://localhost:10000',
-        changeOrigin: true,
-        secure: false,
-        rewrite: (path) => path.replace(/^\/api/, '')
-      }
-    }
+  plugins: [react()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
   },
   build: {
     outDir: 'dist',
-    sourcemap: true
+    sourcemap: false,
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+        },
+      },
+    },
   },
-  optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom', 'axios', 'styled-components', 'framer-motion']
+  server: {
+    port: 10000,
+    strictPort: true,
   },
-  resolve: {
-    alias: {
-      '@': '/src'
-    }
-  }
+  preview: {
+    port: 10000,
+    strictPort: true,
+  },
 }); 

@@ -1,32 +1,18 @@
 services:
   - type: web
     name: weather-frontend
-    env: docker
-    dockerfilePath: ./frontend/Dockerfile
-    buildFilter:
-      paths:
-        - frontend/**
-        - render.yaml
-    healthCheckPath: /healthz
+    env: node
+    plan: free  # 무료 플랜 사용
+    region: singapore  # 아시아 지역 선택
+    buildCommand: |
+      npm install --production
+      npm run build
+    startCommand: npm run preview
     envVars:
-      - key: PORT
-        value: 10000
+      - key: NODE_ENV
+        value: production
       - key: VITE_API_URL
         value: https://weather-backend-knii.onrender.com/api
-      - key: VITE_ENV
-        value: production
-      - key: VITE_CACHE_TIME
-        value: 3600
-      - key: VITE_LOG_LEVEL
-        value: info
-      - key: VITE_ENABLE_AUTH
-        value: true
-      - key: VITE_ENABLE_CART
-        value: true
-      - key: VITE_SITE_NAME
-        value: KYSong Store
-      - key: VITE_CONTACT_EMAIL
-        value: support@kysong.store
     autoDeploy: true
 
   - type: web

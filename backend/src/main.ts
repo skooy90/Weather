@@ -4,7 +4,6 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { seedDatabase } from './seed';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -28,9 +27,6 @@ async function bootstrap() {
 
   // CORS 설정
   app.enableCors();
-
-  // 데이터베이스 시딩
-  await seedDatabase();
 
   const port = process.env.PORT || 10000;
   await app.listen(port);

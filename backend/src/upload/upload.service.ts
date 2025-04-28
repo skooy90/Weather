@@ -1,94 +1,110 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as fs from 'fs';
-import * as path from 'path';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Upload, UploadDocument, UploadType, ImageSubType, DocumentSubType, MediaSubType } from './schemas/upload.schema';
+import * as fs from 'fs';
+import * as path from 'path';
+import { Upload } from './schemas/upload.schema';
+import { UploadType, UploadSubType } from './schemas/upload.schema';
 
 @Injectable()
 export class UploadService {
   constructor(
     private readonly configService: ConfigService,
-    @InjectModel(Upload.name) private readonly uploadModel: Model<UploadDocument>
-  ) {}
-
-  private getUploadPath(type: UploadType, subType: string): string {
-    return path.join(process.cwd(), 'uploads', type, subType);
+    @InjectModel(Upload.name) private readonly uploadModel: Model<Upload>,
+  ) {
+    this.ensureUploadDirectories();
   }
 
-  private async ensureDirectoryExists(dirPath: string): Promise<void> {
-    if (!fs.existsSync(dirPath)) {
-      fs.mkdirSync(dirPath, { recursive: true });
-    }
-  }
+  private ensureUploadDirectories() {
+    const baseDir = process.env.UPLOAD_DIR || '/tmp/uploads';
+    const dirs = [
+      path.join(baseDir, 'images/profile'),
+      path.join(baseDir, 'images/post'),
+      path.join(baseDir, 'images/banner'),
+      path.join(baseDir, 'documents'),
+      path.join(baseDir, 'media'),
+    ];
 
-  private getFileType(mimeType: string): { type: UploadType; subType: string } {
-    if (mimeType.startsWith('image/')) {
-      return { type: UploadType.IMAGE, subType: ImageSubType.POST };
-    } else if (mimeType.startsWith('application/pdf')) {
-      return { type: UploadType.DOCUMENT, subType: DocumentSubType.PDF };
-    } else if (mimeType.startsWith('video/')) {
-      return { type: UploadType.MEDIA, subType: MediaSubType.VIDEO };
-    } else if (mimeType.startsWith('audio/')) {
-      return { type: UploadType.MEDIA, subType: MediaSubType.AUDIO };
-    }
-    throw new Error('Unsupported file type');
-  }
-
-  async saveFile(file: Express.Multer.File, userId: string, subType?: string): Promise<UploadDocument> {
-    const { type, subType: detectedSubType } = this.getFileType(file.mimetype);
-    const finalSubType = subType || detectedSubType;
-    
-    const uploadDir = this.getUploadPath(type, finalSubType);
-    await this.ensureDirectoryExists(uploadDir);
-
-    const timestamp = Date.now();
-    const filename = `${timestamp}-${file.originalname}`;
-    const filepath = path.join(uploadDir, filename);
-
-    fs.writeFileSync(filepath, file.buffer);
-
-    const upload = new this.uploadModel({
-      originalName: file.originalname,
-      path: `/uploads/${type}/${finalSubType}/${filename}`,
-      type,
-      subType: finalSubType,
-      size: file.size,
-      uploadedBy: userId,
-      mimeType: file.mimetype,
+    dirs.forEach(dir => {
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
     });
+  }
 
-    return upload.save();
+  private getUploadPath(type: UploadType, subType?: UploadSubType): string {
+    const baseDir = process.env.UPLOAD_DIR || '/tmp/uploads';
+    switch (type) {
+      case UploadType.IMAGE:
+        return path.join(baseDir, 'images', subType || 'post');
+      case UploadType.DOCUMENT:
+        return path.join(baseDir, 'documents');
+      case UploadType.MEDIA:
+        return path.join(baseDir, 'media');
+      default:
+        return path.join(baseDir, 'others');
+    }
+  }
+
+  async saveFile(
+    file: Express.Multer.File,
+    userId: string,
+    type: UploadType,
+    subType?: UploadSubType,
+  ): Promise<Upload> {
+    try {
+      const uploadDir = this.getUploadPath(type, subType);
+      const filename = `${Date.now()}-${file.originalname}`;
+      const filepath = path.join(uploadDir, filename);
+
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+
+      fs.writeFileSync(filepath, file.buffer);
+
+      const upload = new this.uploadModel({
+        originalName: file.originalname,
+        path: filepath,
+        type,
+        subType,
+        size: file.size,
+        uploadedBy: userId,
+        mimeType: file.mimetype,
+      });
+
+      return await upload.save();
+    } catch (error) {
+      console.error('파일 저장 실패:', error);
+      throw error;
+    }
   }
 
   async deleteFile(id: string): Promise<void> {
-    const upload = await this.uploadModel.findById(id);
-    if (!upload) {
-      throw new Error('File not found');
+    try {
+      const upload = await this.uploadModel.findById(id);
+      if (upload) {
+        if (fs.existsSync(upload.path)) {
+          fs.unlinkSync(upload.path);
+        }
+        await this.uploadModel.findByIdAndDelete(id);
+      }
+    } catch (error) {
+      console.error('파일 삭제 실패:', error);
+      throw error;
     }
-
-    const filepath = path.join(process.cwd(), upload.path);
-    if (fs.existsSync(filepath)) {
-      fs.unlinkSync(filepath);
-    }
-
-    await this.uploadModel.findByIdAndDelete(id);
   }
 
-  async getFileById(id: string): Promise<UploadDocument> {
+  async getFileById(id: string): Promise<Upload> {
     return this.uploadModel.findById(id);
   }
 
-  async getFilesByUser(userId: string): Promise<UploadDocument[]> {
+  async getFilesByUser(userId: string): Promise<Upload[]> {
     return this.uploadModel.find({ uploadedBy: userId });
   }
 
-  async getFilesByType(type: UploadType, subType?: string): Promise<UploadDocument[]> {
-    const query: any = { type };
-    if (subType) {
-      query.subType = subType;
-    }
-    return this.uploadModel.find(query);
+  async getFilesByType(type: UploadType): Promise<Upload[]> {
+    return this.uploadModel.find({ type });
   }
 } 

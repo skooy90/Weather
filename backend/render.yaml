@@ -1,23 +1,27 @@
 services:
   - type: web
     name: weather-backend
-    env: docker
-    dockerfilePath: Dockerfile
-    buildFilter:
-      paths:
-        - "**/*"
-    healthCheckPath: /health
+    env: node
+    plan: free  # 무료 플랜 사용
+    region: singapore  # 아시아 지역 선택
+    buildCommand: |
+      npm install --production
+      npm run build
+    startCommand: npm run start:prod
+    healthCheckPath: /api/health
     envVars:
-      - key: PORT
-        value: 3000
       - key: NODE_ENV
         value: production
+      - key: PORT
+        value: 10000
       - key: MONGODB_URI
-        value: mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@cluster0.mongodb.net/weather?retryWrites=true&w=majority
+        sync: false
       - key: JWT_SECRET
         sync: false
-      - key: CORS_ORIGIN
-        value: https://weather-of7u.onrender.com
-      - key: LOG_LEVEL
-        value: info
+      - key: UPLOAD_DIR
+        value: /tmp/uploads
+      - key: ENABLE_SEEDING
+        value: "true"
+      - key: DEFAULT_CATEGORIES
+        value: '[{"name":"일반","description":"일반 게시글"},{"name":"공지사항","description":"공지사항"},{"name":"질문","description":"질문 게시글"}]'
     autoDeploy: true 
