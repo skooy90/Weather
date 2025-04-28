@@ -1,5 +1,5 @@
 import { Model } from 'mongoose';
-import { Category } from '../models/Category';
+import { Category } from '../schemas/category.schema';
 import { seedCategories } from './categories';
 import { ConfigService } from '@nestjs/config';
 

@@ -5,7 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { seedDatabase } from './seed';
 import { getModelToken } from '@nestjs/mongoose';
-import { Category } from './models/Category';
+import { Category } from './schemas/category.schema';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Category } from '../models/Category';
+import { Category } from '../schemas/category.schema';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
