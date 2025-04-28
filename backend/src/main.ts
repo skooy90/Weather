@@ -3,11 +3,14 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
-import { NestExpressApplication } from '@nestjs/platform-express';
+import { seedDatabase } from './seed';
+import { getModelToken } from '@nestjs/mongoose';
+import { Category } from './models/Category';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  
+  const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
+
   // 전역 파이프 설정
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
@@ -28,8 +31,12 @@ async function bootstrap() {
   // CORS 설정
   app.enableCors();
 
-  const port = process.env.PORT || 10000;
+  const port = configService.get('PORT') || 10000;
   await app.listen(port);
   console.log(`Application is running on: http://localhost:${port}`);
+
+  // 데이터베이스 시딩
+  const categoryModel = app.get(getModelToken(Category.name));
+  await seedDatabase(categoryModel, configService);
 }
 bootstrap(); 
