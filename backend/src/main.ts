@@ -6,10 +6,10 @@ import { ConfigService } from '@nestjs/config';
 import { seedDatabase } from './seed';
 import { getModelToken } from '@nestjs/mongoose';
 import { Category } from './schemas/category.schema';
-import { NestExpressApplication } from '@nestjs/platform-express';
+import { NestApplication } from '@nestjs/core';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestApplication>(AppModule);
   const configService = app.get(ConfigService);
 
   // 전역 파이프 설정
