@@ -6,17 +6,11 @@ import { ConfigService } from '@nestjs/config';
 import { seedDatabase } from './seed';
 import { getModelToken } from '@nestjs/mongoose';
 import { Category } from './schemas/category.schema';
-import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const configService = app.get(ConfigService);
-
-  // 정적 파일 서빙 설정
-  app.useStaticAssets(join(__dirname, '..', 'public'));
-  app.setBaseViewsDir(join(__dirname, '..', 'views'));
-  app.setViewEngine('hbs');
 
   // 전역 파이프 설정
   app.useGlobalPipes(new ValidationPipe({
