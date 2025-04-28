@@ -4,13 +4,27 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { NestFastifyApplication, FastifyAdapter } from '@nestjs/platform-fastify';
+import { FastifyInstance } from 'fastify';
 
 async function bootstrap() {
+  const fastifyAdapter = new FastifyAdapter({
+    ignoreTrailingSlash: true,
+    disableRequestLogging: true,
+  });
+  
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter()
+    fastifyAdapter,
+    { logger: ['error', 'warn'] }
   );
+  
   const configService = app.get(ConfigService);
+
+  // Fastify 인스턴스에 접근하여 정적 파일 서빙 비활성화
+  const fastifyInstance: FastifyInstance = fastifyAdapter.getInstance();
+  fastifyInstance.setNotFoundHandler((request, reply) => {
+    reply.code(404).send({ error: 'Not Found', path: request.url });
+  });
 
   // 전역 파이프 설정
   app.useGlobalPipes(new ValidationPipe({
