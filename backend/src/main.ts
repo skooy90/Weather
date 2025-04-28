@@ -4,6 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { NestApplication } from '@nestjs/core';
+import { Request, Response } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestApplication>(AppModule, {
@@ -15,6 +16,11 @@ async function bootstrap() {
   });
   
   const configService = app.get(ConfigService);
+
+  // 루트 경로 핸들러 추가
+  app.getHttpAdapter().get('/', (req: Request, res: Response) => {
+    res.redirect('/api');
+  });
 
   // 전역 파이프 설정
   app.useGlobalPipes(new ValidationPipe({
