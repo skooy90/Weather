@@ -18,10 +18,12 @@ services:
         sync: false
       - key: JWT_SECRET
         sync: false
+      - key: FRONTEND_URL
+        value: https://weather-frontend.onrender.com
       - key: UPLOAD_DIR
         value: /tmp/uploads
       - key: ENABLE_SEEDING
         value: "true"
       - key: DEFAULT_CATEGORIES
-        value: '[{"name":"일반","description":"일반 게시글"},{"name":"공지사항","description":"공지사항"},{"name":"질문","description":"질문 게시글"}]'
+        value: '[{"name":"날씨","description":"날씨 관련 정보","subcategories":["현재 날씨","예보","기상 특보"]},{"name":"기후","description":"기후 관련 정보","subcategories":["기후 변화","기후 데이터","기후 정책"]},{"name":"환경","description":"환경 관련 정보","subcategories":["대기 질","환경 보호","지속 가능성"]}]'
     autoDeploy: true 
