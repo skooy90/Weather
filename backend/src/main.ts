@@ -3,9 +3,6 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
-import { seedDatabase } from './seed';
-import { getModelToken } from '@nestjs/mongoose';
-import { Category } from './schemas/category.schema';
 import { NestApplication } from '@nestjs/core';
 
 async function bootstrap() {
@@ -38,9 +35,5 @@ async function bootstrap() {
   const port = configService.get('PORT') || 10000;
   await app.listen(port);
   console.log(`Application is running on: http://localhost:${port}`);
-
-  // 데이터베이스 시딩
-  const categoryModel = app.get(getModelToken(Category.name));
-  await seedDatabase(categoryModel, configService);
 }
 bootstrap(); 
