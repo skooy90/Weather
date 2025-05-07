@@ -11,6 +11,16 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Health check 엔드포인트
+app.get('/', (req, res) => {
+  const mongoStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+  res.json({
+    status: 'ok',
+    mongo: mongoStatus,
+    timestamp: new Date().toISOString()
+  });
+});
+
 // 라우트 설정
 app.use('/api/contents', contentRoutes);
 app.use('/api/categories', categoryRoutes);

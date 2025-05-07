@@ -1,3 +1,4 @@
+VITE_API_URL=https://weather-backend-knii.onrender.com/api 
 # dependencies
 /node_modules
 /.pnp
@@ -64,4 +65,5 @@ coverage/
 
 # IDE 설정
 .vscode/
-.idea/ 
+.idea/
+

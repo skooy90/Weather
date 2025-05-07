@@ -38,6 +38,7 @@ COPY --from=builder /app/dist ./dist
 ENV NODE_ENV=production
 ENV PORT=10000
 ENV FRONTEND_URL=https://weather-frontend.onrender.com
+ENV VITE_API_URL=https://weather-backend-knii.onrender.com/api
 
 # Expose port
 EXPOSE 10000

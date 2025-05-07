@@ -16,6 +16,13 @@ RUN npm install
 # 소스 코드 복사
 COPY . .
 
+# 환경 변수 설정
+ENV VITE_API_URL=https://weather-backend-knii.onrender.com/api
+ENV VITE_APP_TITLE="Weather App"
+ENV VITE_APP_DESCRIPTION="Weather information application"
+ENV VITE_APP_VERSION="1.0.0"
+ENV VITE_APP_ENV="production"
+
 # esbuild 문제 해결: 바이너리 재빌드
 RUN npm rebuild esbuild
 
