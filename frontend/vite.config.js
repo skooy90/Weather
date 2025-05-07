@@ -2,6 +2,15 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
+// 환경 변수 스키마 정의
+const envSchema = {
+  VITE_API_URL: String,
+  VITE_APP_TITLE: String,
+  VITE_APP_DESCRIPTION: String,
+  VITE_APP_VERSION: String,
+  VITE_APP_ENV: String
+};
+
 export default defineConfig(({ command }) => ({
   plugins: [react()],
   resolve: {
@@ -46,9 +55,13 @@ export default defineConfig(({ command }) => ({
   },
   define: {
     'process.env': {
-      VITE_API_URL: command === 'serve' 
-        ? 'http://localhost:10000'
-        : 'https://weather-backend-knii.onrender.com'
+      VITE_API_URL: JSON.stringify(command === 'serve' 
+        ? 'http://localhost:10000/api'
+        : 'https://weather-backend-knii.onrender.com/api'),
+      VITE_APP_TITLE: JSON.stringify('Weather App'),
+      VITE_APP_DESCRIPTION: JSON.stringify('Weather information application'),
+      VITE_APP_VERSION: JSON.stringify('1.0.0'),
+      VITE_APP_ENV: JSON.stringify(command === 'serve' ? 'development' : 'production')
     }
   }
 })); 
