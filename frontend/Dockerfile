@@ -37,6 +37,7 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # 빌드된 파일 복사
 COPY --from=builder /app/dist /usr/share/nginx/html
+COPY --from=builder /app/public/images /usr/share/nginx/html/images
 COPY --from=builder /app/public/favicon.ico /usr/share/nginx/html/
 COPY --from=builder /app/public/favicon-*.png /usr/share/nginx/html/
 COPY --from=builder /app/public/apple-touch-icon.png /usr/share/nginx/html/

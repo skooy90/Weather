@@ -1,10 +1,8 @@
 import axios from 'axios';
 import env from '../config/env';
 
-const API_URL = env.VITE_API_URL || 
-  (env.VITE_NODE_ENV === 'production' 
-    ? 'https://weather-backend-knii.onrender.com'
-    : 'http://localhost:10000');
+const API_URL = import.meta.env.VITE_API_URL;
+if (!API_URL) throw new Error('VITE_API_URL 환경변수가 설정되어 있지 않습니다.');
 
 const client = axios.create({
   baseURL: `${API_URL}`,

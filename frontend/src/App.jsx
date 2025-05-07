@@ -1,4 +1,6 @@
 import React from 'react';
+import { ThemeProvider } from 'styled-components';
+import theme from './theme';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -11,7 +13,7 @@ import { CommentProvider } from './contexts/CommentContext';
 
 const App = () => {
   return (
-    <>
+    <ThemeProvider theme={theme}>
       <Header />
       <CommentProvider>
         <Routes>
@@ -30,7 +32,7 @@ const App = () => {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </CommentProvider>
-    </>
+    </ThemeProvider>
   );
 };
 

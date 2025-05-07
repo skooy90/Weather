@@ -1,4 +1,5 @@
-export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:10000/api';
+export const API_URL = import.meta.env.VITE_API_URL;
+if (!API_URL) throw new Error('VITE_API_URL 환경변수가 설정되어 있지 않습니다.');
 
 export const API_ENDPOINTS = {
   AUTH: {
