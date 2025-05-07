@@ -19,11 +19,15 @@ export class AppController {
 
   @Get('health')
   async getHealth() {
-    const mongoStatus = this.connection.readyState === 1 ? 'connected' : 'disconnected';
-    return {
-      status: 'ok',
-      mongo: mongoStatus,
-      timestamp: new Date().toISOString()
-    };
+    try {
+      const mongoStatus = this.connection.readyState === 1 ? 'connected' : 'disconnected';
+      return {
+        status: 'ok',
+        mongo: mongoStatus,
+        timestamp: new Date().toISOString()
+      };
+    } catch (e) {
+      return { status: 'fail', error: e.message };
+    }
   }
 } 
