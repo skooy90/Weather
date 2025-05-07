@@ -12,7 +12,9 @@ services:
       - key: NODE_ENV
         value: production
       - key: VITE_API_URL
-        value: https://weather-backend-knii.onrender.com/api
+        value: https://weather-backend-knii.onrender.com
+      - key: VITE_UPLOAD_URL
+        value: https://weather-backend-knii.onrender.com/upload
     autoDeploy: true
 
   - type: web

@@ -1,24 +1,27 @@
 {
   "name": "weather-backend",
   "version": "1.0.0",
-  "description": "Weather Backend API",
-  "main": "src/main.ts",
+  "description": "Weather application backend",
+  "main": "src/app.js",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\"",
-    "start": "nest start",
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "seed": "ts-node src/seed/seed-runner.ts",
+    "migrate": "node src/scripts/migrateCategories.js"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -30,10 +33,12 @@
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^7.0.0",
     "@nestjs/platform-fastify": "^10.0.0",
+    "@nestjs-modules/ioredis": "^1.0.0",
+    "ioredis": "^5.3.2",
     "bcrypt": "^5.1.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
-    "mongoose": "^7.0.0",
+    "mongoose": "^6.0.12",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
@@ -41,7 +46,9 @@
     "rxjs": "^7.8.1",
     "multer": "^1.4.5-lts.1",
     "@types/multer": "^1.4.7",
-    "fastify": "^4.0.0"
+    "fastify": "^4.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
@@ -72,7 +79,9 @@
     "npmlog": "^7.0.1",
     "are-we-there-yet": "^3.0.0",
     "gauge": "^4.0.4",
-    "npm": "^10.2.4"
+    "npm": "^10.2.4",
+    "@types/mongoose": "^5.11.97",
+    "nodemon": "^2.0.15"
   },
   "jest": {
     "moduleFileExtensions": [

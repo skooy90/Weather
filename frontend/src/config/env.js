@@ -1,12 +1,17 @@
 const envSchema = {
-  VITE_API_URL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
+  // API 관련
+  VITE_API_URL: import.meta.env.VITE_API_URL || 'http://localhost:10000',
+  
+  // 앱 설정
   VITE_APP_ENV: import.meta.env.VITE_APP_ENV || 'development',
   VITE_APP_NAME: import.meta.env.VITE_APP_NAME || 'Weather App',
-  VITE_APP_VERSION: import.meta.env.VITE_APP_VERSION || '1.0.0',
+  VITE_APP_BASE_URL: import.meta.env.VITE_APP_BASE_URL || '/',
+  
+  // 성능 관련
   VITE_CACHE_TTL: import.meta.env.VITE_CACHE_TTL || '3600',
-  VITE_ANALYTICS_ID: import.meta.env.VITE_ANALYTICS_ID || '',
+  
+  // 모니터링
   VITE_SENTRY_DSN: import.meta.env.VITE_SENTRY_DSN || '',
-  VITE_CDN_URL: import.meta.env.VITE_CDN_URL || '',
 };
 
 // 환경 변수 검증

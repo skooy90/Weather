@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "10000:10000"
+    environment:
+      - NODE_ENV=production
+      - VITE_API_URL=${API_URL}
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge 

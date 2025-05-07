@@ -6,49 +6,36 @@ const contentSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
-  author: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  content: {
+  description: {
     type: String,
     required: true
   },
   category: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Category',
-    required: true
+    type: String,
+    required: true,
+    enum: ['trending', 'lifestyle', 'shopping', 'food', 'hobby', 'tech', 'family']
   },
   subcategory: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Subcategory',
-    required: true
-  },
-  image: {
     type: String,
-    required: true
+    required: false
   },
-  views: {
-    type: Number,
-    default: 0
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   },
   likes: {
     type: Number,
     default: 0
   },
-  comments: [{
-    author: String,
-    content: String,
-    createdAt: {
-      type: Date,
-      default: Date.now
-    }
-  }],
-  tags: [{
-    type: String,
-    trim: true
-  }],
+  shares: {
+    type: Number,
+    default: 0
+  },
+  bookmarks: {
+    type: Number,
+    default: 0
+  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -56,30 +43,14 @@ const contentSchema = new mongoose.Schema({
   updatedAt: {
     type: Date,
     default: Date.now
-  },
-  status: {
-    type: String,
-    enum: ['draft', 'published', 'archived'],
-    default: 'published'
-  },
-  isTrending: {
-    type: Boolean,
-    default: false
-  },
-  isFeatured: {
-    type: Boolean,
-    default: false
   }
 });
 
-// 인덱스 설정
+// 인덱스 추가
 contentSchema.index({ category: 1, subcategory: 1 });
-contentSchema.index({ createdAt: -1 });
-contentSchema.index({ views: -1 });
 contentSchema.index({ likes: -1 });
-contentSchema.index({ tags: 1 });
 
-// 업데이트 시 updatedAt 필드 자동 갱신
+// 업데이트 시 updatedAt 필드 자동 업데이트
 contentSchema.pre('save', function(next) {
   this.updatedAt = Date.now();
   next();

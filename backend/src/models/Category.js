@@ -4,13 +4,21 @@ const categorySchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    enum: ['trending', 'lifestyle', 'shopping', 'food', 'hobby', 'tech', 'family']
   },
-  description: String,
+  name_kr: {
+    type: String,
+    required: true
+  },
   subcategories: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Subcategory'
+    type: String,
+    required: false
   }],
+  order: {
+    type: Number,
+    default: 0
+  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -21,7 +29,7 @@ const categorySchema = new mongoose.Schema({
   }
 });
 
-// 업데이트 시 updatedAt 필드 자동 갱신
+// 업데이트 시 updatedAt 필드 자동 업데이트
 categorySchema.pre('save', function(next) {
   this.updatedAt = Date.now();
   next();

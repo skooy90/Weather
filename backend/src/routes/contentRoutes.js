@@ -1,37 +1,33 @@
 const express = require('express');
 const router = express.Router();
 const contentController = require('../controllers/contentController');
-const auth = require('../middleware/userAuth');
+const { authenticateToken } = require('../middleware/auth');
 
-// 모든 컨텐츠 조회
-router.get('/', contentController.getAllContents);
+// 모든 콘텐츠 조회
+router.get('/', contentController.getContents);
 
-// 카테고리별 컨텐츠 조회
-router.get('/category/:categoryId', contentController.getContentsByCategory);
-router.get('/category/:categoryId/subcategory/:subcategoryId', contentController.getContentsByCategory);
+// 카테고리별 콘텐츠 조회
+router.get('/category/:category', contentController.getContentsByCategory);
 
-// 특정 컨텐츠 조회
+// 서브카테고리별 콘텐츠 조회
+router.get('/category/:category/subcategory/:subcategory', contentController.getContentsBySubcategory);
+
+// 인기 콘텐츠 조회
+router.get('/trending', contentController.getTrendingContents);
+
+// 콘텐츠 상세 조회
 router.get('/:id', contentController.getContentById);
 
-// 자동 콘텐츠 생성
-router.post('/generate', contentController.generateContents);
+// 콘텐츠 생성 (인증 필요)
+router.post('/', authenticateToken, contentController.createContent);
 
-// 컨텐츠 생성 (관리자만)
-router.post('/', auth, contentController.createContent);
+// 콘텐츠 수정 (인증 필요)
+router.put('/:id', authenticateToken, contentController.updateContent);
 
-// 컨텐츠 수정 (관리자만)
-router.put('/:id', auth, contentController.updateContent);
+// 콘텐츠 삭제 (인증 필요)
+router.delete('/:id', authenticateToken, contentController.deleteContent);
 
-// 컨텐츠 삭제 (관리자만)
-router.delete('/:id', auth, contentController.deleteContent);
-
-// 댓글 추가
-router.post('/:id/comments', auth, contentController.addComment);
-
-// 댓글 수정
-router.put('/:contentId/comments/:commentId', auth, contentController.updateComment);
-
-// 댓글 삭제
-router.delete('/:contentId/comments/:commentId', auth, contentController.deleteComment);
+// 좋아요 처리 (인증 필요)
+router.post('/:id/like', authenticateToken, contentController.likeContent);
 
 module.exports = router; 

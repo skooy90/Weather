@@ -1,0 +1,50 @@
+FROM node:18-alpine as builder
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install all dependencies (including devDependencies)
+RUN npm install
+
+# Copy source code
+COPY . .
+
+# Build the application
+RUN npm run build
+
+# Seed the database
+RUN npm run seed
+
+# Production stage
+FROM node:18-alpine
+
+# Install curl for health check
+RUN apk add --no-cache curl
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install production dependencies only
+RUN npm install --only=production
+
+# Copy built files from builder stage
+COPY --from=builder /app/dist ./dist
+
+# Set environment variables
+ENV NODE_ENV=production
+ENV PORT=10000
+ENV FRONTEND_URL=https://weather-frontend.onrender.com
+
+# Expose port
+EXPOSE 10000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:10000/api/health || exit 1
+
+# Start the application
+CMD ["npm", "run", "start:prod"] 

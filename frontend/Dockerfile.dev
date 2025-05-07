@@ -1,0 +1,35 @@
+FROM node:20-alpine
+
+# 필수 패키지 설치
+RUN apk add --no-cache libc6-compat imagemagick
+
+WORKDIR /app
+
+# 패키지 파일 복사
+COPY package*.json ./
+
+# 의존성 설치
+RUN npm install
+
+# 소스 코드 복사
+COPY . .
+
+# esbuild 문제 해결: 바이너리 재빌드
+RUN npm rebuild esbuild
+
+# npm scripts 실행에 필요한 바이너리 파일에 실행권한 부여
+RUN chmod -R +x /app/node_modules/.bin
+
+# favicon 생성 스크립트 실행 권한 부여 및 실행
+RUN cd /app && chmod +x scripts/generate-favicon.sh && sh scripts/generate-favicon.sh
+
+# 환경 변수 설정
+ENV NODE_ENV=development
+ENV VITE_API_URL=http://localhost:10000/api
+ENV PORT=5173
+
+# 5173번 포트 노출
+EXPOSE 5173
+
+# 개발 서버 실행
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "5173"] 

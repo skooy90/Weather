@@ -1,232 +1,216 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
-import { signUp } from '../utils/api';
-
-const SignUpContainer = styled.div`
-  max-width: 500px;
-  margin: 100px auto;
-  padding: 2rem;
-  background: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-`;
-
-const Title = styled.h1`
-  font-size: 2rem;
-  color: #2d3748;
-  margin-bottom: 2rem;
-  text-align: center;
-`;
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-`;
-
-const FormGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-`;
-
-const Label = styled.label`
-  font-size: 1rem;
-  color: #4a5568;
-  font-weight: 500;
-`;
-
-const Input = styled.input`
-  padding: 0.75rem 1rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.375rem;
-  font-size: 1rem;
-  transition: all 0.2s;
-
-  &:focus {
-    outline: none;
-    border-color: #4299e1;
-    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
-  }
-`;
-
-const ErrorMessage = styled.p`
-  color: #e53e3e;
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
-`;
-
-const SuccessMessage = styled.p`
-  color: #38a169;
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
-`;
-
-const SubmitButton = styled.button`
-  background-color: #4299e1;
-  color: white;
-  padding: 0.75rem 1rem;
-  border: none;
-  border-radius: 0.375rem;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover {
-    background-color: #3182ce;
-  }
-
-  &:disabled {
-    background-color: #cbd5e0;
-    cursor: not-allowed;
-  }
-`;
-
-const LoginLink = styled.a`
-  color: #4299e1;
-  text-align: center;
-  margin-top: 1rem;
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-  }
-`;
+import { authAPI } from '../api/auth';
+import * as S from './SignUp.styles';
+import { API_URL } from '../config/api';
 
 const SignUp = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
+    userId: '',
     password: '',
     confirmPassword: '',
-    name: '',
-    phone: ''
+    username: '',
+    birth: '',
+    emailFront: '',
+    emailDomain: 'naver.com',
+    customDomain: '',
   });
-  const [errors, setErrors] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
-
-  const validateForm = () => {
-    const newErrors = {};
-    
-    if (!formData.username) {
-      newErrors.username = '아이디를 입력해주세요';
-    } else if (formData.username.length < 4) {
-      newErrors.username = '아이디는 4자 이상이어야 합니다';
-    }
-
-    if (!formData.email) {
-      newErrors.email = '이메일을 입력해주세요';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = '올바른 이메일 형식을 입력해주세요';
-    }
-
-    if (!formData.password) {
-      newErrors.password = '비밀번호를 입력해주세요';
-    } else if (formData.password.length < 8) {
-      newErrors.password = '비밀번호는 8자 이상이어야 합니다';
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = '비밀번호가 일치하지 않습니다';
-    }
-
-    if (!formData.name) {
-      newErrors.name = '이름을 입력해주세요';
-    }
-
-    if (!formData.phone) {
-      newErrors.phone = '전화번호를 입력해주세요';
-    } else if (!/^\d{3}-\d{4}-\d{4}$/.test(formData.phone)) {
-      newErrors.phone = '올바른 전화번호 형식을 입력해주세요 (예: 010-1234-5678)';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [isCustomDomain, setIsCustomDomain] = useState(false);
+  const [isIdChecked, setIsIdChecked] = useState(false);
+  const [isIdValid, setIsIdValid] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    // 입력 시 에러 메시지 초기화
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
+    setFormData(prev => ({ ...prev, [name]: value }));
+    if (name === 'userId') {
+      setIsIdValid(value.length >= 4);
+      if (value !== formData.userId) {
+        setIsIdChecked(false);
+      }
+    }
+    if (name === 'emailDomain') {
+      setIsCustomDomain(value === 'custom');
+      if (value !== 'custom') setFormData(prev => ({ ...prev, customDomain: '' }));
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    setError('');
+    setSuccess('');
 
-    setIsLoading(true);
-    setSuccessMessage('');
-    
+    if (!formData.userId || !formData.password || !formData.confirmPassword || !formData.username || !formData.birth || !formData.emailFront || (!isCustomDomain && !formData.emailDomain) || (isCustomDomain && !formData.customDomain)) {
+      setError('모든 항목을 입력해주세요.');
+      return;
+    }
+    if (formData.password !== formData.confirmPassword) {
+      setError('비밀번호가 일치하지 않습니다.');
+      return;
+    }
+    if (!isIdChecked) {
+      setError('아이디 중복 확인을 해주세요.');
+      return;
+    }
+
+    const email = `${formData.emailFront}@${isCustomDomain ? formData.customDomain : formData.emailDomain}`;
     try {
-      // API 호출 전에 confirmPassword 제거
-      const { confirmPassword, ...signUpData } = formData;
-      await signUp(signUpData);
-      
-      setSuccessMessage('회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.');
-      setTimeout(() => {
-        navigate('/login');
-      }, 2000);
-    } catch (error) {
-      setErrors(prev => ({
-        ...prev,
-        submit: error.message
-      }));
-    } finally {
-      setIsLoading(false);
+      await authAPI.signup({
+        userId: formData.userId,
+        username: formData.username,
+        email,
+        password: formData.password,
+        birth: new Date(formData.birth).toISOString()
+      });
+      setSuccess('회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.');
+      setTimeout(() => navigate('/login'), 2000);
+    } catch (err) {
+      setError(err.message || '회원가입 중 오류가 발생했습니다.');
+    }
+  };
+
+  const handleCheckDuplicate = async () => {
+    setError('');
+    setSuccess('');
+    if (!formData.userId) {
+      setError('아이디를 입력하세요.');
+      return;
+    }
+    try {
+      const res = await authAPI.checkUserId(formData.userId);
+      const available = res?.available;
+      if (available === undefined) {
+        setError('중복확인 응답이 올바르지 않습니다.');
+        setIsIdChecked(false);
+        return;
+      }
+      if (!available) {
+        setError('이미 사용 중인 아이디입니다.');
+        setIsIdChecked(false);
+      } else {
+        setSuccess('사용 가능한 아이디입니다.');
+        setIsIdChecked(true);
+      }
+    } catch (err) {
+      setError(err.message || '중복확인 중 오류가 발생했습니다.');
+      setIsIdChecked(false);
     }
   };
 
   return (
-    <SignUpContainer>
-      <SignUpForm onSubmit={handleSubmit}>
-        <Title>회원가입</Title>
-        <Input
-          type="text"
-          placeholder="이름"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          required
-        />
-        <Input
-          type="email"
-          placeholder="이메일"
-          value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          required
-        />
-        <Input
+    <S.SignUpContainer>
+      <S.Title>회원가입</S.Title>
+      <S.Form onSubmit={handleSubmit}>
+        <S.Label htmlFor="userId">아이디</S.Label>
+        <S.Row>
+          <S.Input
+            id="userId"
+            name="userId"
+            type="text"
+            placeholder="아이디"
+            value={formData.userId}
+            onChange={handleChange}
+            autoComplete="username"
+            required
+          />
+          <S.CheckButton 
+            type="button" 
+            onClick={handleCheckDuplicate}
+            disabled={!isIdValid}
+            style={{ 
+              backgroundColor: isIdValid ? '#007bff' : '#cccccc',
+              cursor: isIdValid ? 'pointer' : 'not-allowed'
+            }}
+          >
+            중복확인
+          </S.CheckButton>
+        </S.Row>
+        <S.Label htmlFor="password">비밀번호</S.Label>
+        <S.Input
+          id="password"
+          name="password"
           type="password"
           placeholder="비밀번호"
           value={formData.password}
-          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+          onChange={handleChange}
+          autoComplete="new-password"
           required
         />
-        <Input
-          type="tel"
-          placeholder="전화번호 (예: 010-1234-5678)"
-          value={formData.phone}
-          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+        <S.Label htmlFor="confirmPassword">비밀번호 확인</S.Label>
+        <S.Input
+          id="confirmPassword"
+          name="confirmPassword"
+          type="password"
+          placeholder="비밀번호 확인"
+          value={formData.confirmPassword}
+          onChange={handleChange}
+          autoComplete="new-password"
           required
         />
-        <SubmitButton type="submit" disabled={isLoading}>
-          {isLoading ? '가입 중...' : '가입하기'}
-        </SubmitButton>
-        <LoginLink to="/login">이미 계정이 있으신가요? 로그인</LoginLink>
-      </SignUpForm>
-    </SignUpContainer>
+        <S.Label htmlFor="username">이름</S.Label>
+        <S.Input
+          id="username"
+          name="username"
+          type="text"
+          placeholder="이름"
+          value={formData.username}
+          onChange={handleChange}
+          required
+        />
+        <S.Label htmlFor="birth">생년월일</S.Label>
+        <S.Input
+          id="birth"
+          name="birth"
+          type="date"
+          placeholder="연도. 월. 일."
+          value={formData.birth}
+          onChange={handleChange}
+          required
+        />
+        <S.Label>이메일</S.Label>
+        <S.Row>
+          <S.Input
+            name="emailFront"
+            type="text"
+            placeholder="이메일"
+            value={formData.emailFront}
+            onChange={handleChange}
+            style={{ flex: 2 }}
+            required
+          />
+          <span>@</span>
+          {isCustomDomain ? (
+            <S.Input
+              name="customDomain"
+              type="text"
+              placeholder="도메인 입력"
+              value={formData.customDomain}
+              onChange={handleChange}
+              style={{ flex: 2 }}
+              required
+            />
+          ) : (
+            <S.EmailDomainSelect
+              name="emailDomain"
+              value={formData.emailDomain}
+              onChange={handleChange}
+              style={{ flex: 2 }}
+              required
+            >
+              <option value="naver.com">naver.com</option>
+              <option value="gmail.com">gmail.com</option>
+              <option value="daum.net">daum.net</option>
+              <option value="custom">직접입력</option>
+            </S.EmailDomainSelect>
+          )}
+        </S.Row>
+        {error && <S.ErrorMessage>{error}</S.ErrorMessage>}
+        {success && <S.SuccessMessage>{success}</S.SuccessMessage>}
+        <S.Button type="submit">가입하기</S.Button>
+      </S.Form>
+    </S.SignUpContainer>
   );
 };
 

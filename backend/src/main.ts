@@ -8,40 +8,16 @@ import { Request, Response } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestApplication>(AppModule, {
-    logger: ['error', 'warn'],
+    logger: ['error', 'warn', 'log', 'debug', 'verbose'],
     cors: {
-      origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-      credentials: true,
+      origin: '*',
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+      credentials: false
     }
   });
   
   const configService = app.get(ConfigService);
-
-  // CSP 헤더 설정
-  app.use((req: Request, res: Response, next) => {
-    res.setHeader(
-      'Content-Security-Policy',
-      "default-src 'self'; " +
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; " +
-      "style-src 'self' 'unsafe-inline' https://unpkg.com; " +
-      "connect-src 'self' https://weather-backend-knii.onrender.com; " +
-      "img-src 'self' data: https:; " +
-      "font-src 'self' data: https:;"
-    );
-    next();
-  });
-
-  // 루트 경로 핸들러 추가
-  app.getHttpAdapter().get('/', (req: Request, res: Response) => {
-    res.redirect('/api');
-  });
-
-  // 전역 파이프 설정
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,
-    forbidNonWhitelisted: true,
-    transform: true,
-  }));
 
   // Swagger 설정
   const config = new DocumentBuilder()
@@ -51,10 +27,40 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api/docs', app, document);
 
-  const port = configService.get('PORT') || 10000;
-  await app.listen(port);
-  console.log(`Application is running on: http://localhost:${port}`);
+  // 전역 접두사 설정
+  app.setGlobalPrefix('api');
+
+  // CSP 헤더 설정
+  app.use((req: Request, res: Response, next) => {
+    res.setHeader(
+      'Content-Security-Policy',
+      "default-src 'self'; " +
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; " +
+      "style-src 'self' 'unsafe-inline' https://unpkg.com; " +
+      "connect-src 'self' *; " +
+      "img-src 'self' data: https:; " +
+      "font-src 'self' data: https:;"
+    );
+    next();
+  });
+
+  // 전역 파이프 설정
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    transform: true,
+  }));
+
+  try {
+    const port = process.env.PORT || 10000;
+    await app.listen(port);
+    console.log(`Application is running on: http://localhost:${port}`);
+  } catch (error) {
+    console.error('Failed to start the application:', error);
+    process.exit(1);
+  }
 }
+
 bootstrap(); 

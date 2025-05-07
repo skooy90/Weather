@@ -53,7 +53,7 @@ const StyledTitle = styled.h3`
   line-height: 1.4;
 `;
 
-const StyledDescription = styled.p`
+const StyledContent = styled.p`
   font-size: 14px;
   color: #666;
   margin: 0 0 16px 0;
@@ -75,12 +75,12 @@ const StyledDate = styled.span`
 `;
 
 const ContentCard = ({ content, onLike, onShare, onClick }) => {
-  const { title, description, category, image, date, likes, views } = content;
+  const { title, content: contentText, category, subcategory, author, createdAt, likes, views, image } = content;
 
   const formatDate = (dateString) => {
     try {
-      const [year, month, day] = dateString.split('-');
-      return `${year}년 ${month}월 ${day}일`;
+      const date = new Date(dateString);
+      return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
     } catch (error) {
       console.error('날짜 포맷팅 에러:', error);
       return dateString;
@@ -109,19 +109,23 @@ const ContentCard = ({ content, onLike, onShare, onClick }) => {
 
   return (
     <StyledCardContainer onClick={onClick}>
-      <StyledImageContainer>
-        <StyledImage
-          src={image}
-          alt={title}
-          loading="lazy"
-        />
-      </StyledImageContainer>
+      {image && (
+        <StyledImageContainer>
+          <StyledImage src={image} alt={title} />
+        </StyledImageContainer>
+      )}
       <StyledContentContainer>
-        <StyledCategory>{category}</StyledCategory>
+        <StyledCategory>
+          {category}
+          {subcategory && ` > ${subcategory}`}
+        </StyledCategory>
         <StyledTitle>{title}</StyledTitle>
-        <StyledDescription>{description}</StyledDescription>
+        <StyledContent>{contentText}</StyledContent>
         <StyledMetaContainer>
-          <StyledDate>{formatDate(date)}</StyledDate>
+          <div>
+            <span>{author}</span>
+            <StyledDate>{formatDate(createdAt)}</StyledDate>
+          </div>
           <InteractionButtons
             likes={likes}
             views={views}

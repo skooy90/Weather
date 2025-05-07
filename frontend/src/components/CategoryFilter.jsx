@@ -1,68 +1,41 @@
 import React from 'react';
+import { Box, Tabs, Tab } from '@mui/material';
 import styled from 'styled-components';
 
-const StyledFilterContainer = styled.div`
+const CategorySection = styled.section`
   margin-bottom: 2rem;
 `;
 
-const StyledFilterGroup = styled.div`
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-`;
-
-const StyledSelect = styled.select`
-  padding: 0.5rem;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-  background-color: white;
-  cursor: pointer;
-`;
-
-const CategoryFilter = ({ 
-  selectedCategory, 
-  selectedSubcategory, 
-  onSelectCategory, 
-  onSelectSubcategory,
-  categories,
-  subcategories
+const CategoryFilter = ({
+  categories = [],
+  selectedCategory,
+  onSelectCategory = () => { console.warn('onSelectCategory prop이 전달되지 않았습니다.'); }
 }) => {
-  const handleCategoryChange = (e) => {
-    onSelectCategory(e.target.value);
-  };
-
-  const handleSubcategoryChange = (e) => {
-    onSelectSubcategory(e.target.value);
+  const handleCategoryClick = (event, newValue) => {
+    event.preventDefault();
+    onSelectCategory(newValue);
   };
 
   return (
-    <StyledFilterContainer>
-      <StyledFilterGroup>
-        <StyledSelect
+    <CategorySection>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Tabs
           value={selectedCategory}
-          onChange={handleCategoryChange}
+          onChange={handleCategoryClick}
+          variant="scrollable"
+          scrollButtons="auto"
+          aria-label="category tabs"
         >
-          {categories.map(category => (
-            <option key={category.id} value={category.id}>
-              {category.name}
-            </option>
+          {(categories || []).map((category) => (
+            <Tab
+              key={category.name}
+              label={category.name_kr}
+              value={category.name}
+            />
           ))}
-        </StyledSelect>
-
-        {selectedCategory !== 'all' && subcategories[selectedCategory] && (
-          <StyledSelect
-            value={selectedSubcategory}
-            onChange={handleSubcategoryChange}
-          >
-            {subcategories[selectedCategory].map(subcategory => (
-              <option key={subcategory.id} value={subcategory.id}>
-                {subcategory.name}
-              </option>
-            ))}
-          </StyledSelect>
-        )}
-      </StyledFilterGroup>
-    </StyledFilterContainer>
+        </Tabs>
+      </Box>
+    </CategorySection>
   );
 };
 

@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import ContentCard from '../ContentCard/ContentCard';
+import Loading from '../Loading/Loading';
+import Error from '../Error/Error';
 
 const StyledContentGrid = styled.div`
   display: grid;
@@ -30,7 +32,19 @@ const StyledCategoryTab = styled.button`
   }
 `;
 
-const ContentGrid = ({ contents, onLike, onShare, onCardClick }) => {
+const ContentGrid = ({ contents, onLike, onShare, onCardClick, loading, error }) => {
+  if (loading) {
+    return <Loading>로딩 중...</Loading>;
+  }
+
+  if (error) {
+    return <Error>{error}</Error>;
+  }
+
+  if (!contents || contents.length === 0) {
+    return <Error>컨텐츠가 없습니다.</Error>;
+  }
+
   return (
     <StyledContentGrid>
       {contents.map(content => (
