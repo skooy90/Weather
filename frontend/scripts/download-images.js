@@ -3,6 +3,11 @@ const fs = require('fs');
 const path = require('path');
 
 const imageUrls = {
+  ads: {
+    'product1.jpg': 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da',
+    'product2.jpg': 'https://images.unsplash.com/photo-1607082349566-187342175e2f',
+    'product3.jpg': 'https://images.unsplash.com/photo-1607082350899-7e105aa886ae'
+  },
   trending: {
     'chatgpt5-preview.jpg': 'https://images.unsplash.com/photo-1677442136019-21780ecad995',
     'remote-work-2024.jpg': 'https://images.unsplash.com/photo-1587560699334-cc4ff634909a'

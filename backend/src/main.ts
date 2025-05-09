@@ -3,11 +3,11 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
-import { NestApplication } from '@nestjs/core';
-import { Request, Response } from 'express';
+import { join } from 'path';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestApplication>(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: ['error', 'warn', 'log', 'debug', 'verbose'],
     cors: {
       origin: '*',
@@ -18,6 +18,11 @@ async function bootstrap() {
   });
   
   const configService = app.get(ConfigService);
+
+  // 정적 파일 서빙 설정
+  app.useStaticAssets(join(__dirname, '..', 'public'), {
+    prefix: '/images/',
+  });
 
   // Swagger 설정
   const config = new DocumentBuilder()
@@ -33,7 +38,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
 
   // CSP 헤더 설정
-  app.use((req: Request, res: Response, next) => {
+  app.use((req, res, next) => {
     res.setHeader(
       'Content-Security-Policy',
       "default-src 'self'; " +

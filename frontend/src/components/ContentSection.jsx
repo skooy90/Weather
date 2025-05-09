@@ -109,28 +109,28 @@ const ContentSection = ({
       <S.StyledAdSection>
         <S.StyledAdTitle>More articles</S.StyledAdTitle>
         <S.StyledAdCard href="#">
-          <S.StyledAdImage src="/images/ads/product1.jpg" alt="추천 상품 1" />
+          <S.StyledAdImage src="/images/green_1.jpg" alt="추천 상품 1" />
           <S.StyledAdContent>
             <S.StyledAdCardTitle>4월에는 코딩테스트 공부 '제대로' 하자</S.StyledAdCardTitle>
             <S.StyledAdDescription>체계적인 학습 방법으로 코딩테스트 준비하기</S.StyledAdDescription>
           </S.StyledAdContent>
         </S.StyledAdCard>
         <S.StyledAdCard href="#">
-          <S.StyledAdImage src="/images/ads/product2.jpg" alt="추천 상품 2" />
+          <S.StyledAdImage src="/images/green_2.jpg" alt="추천 상품 2" />
           <S.StyledAdContent>
             <S.StyledAdCardTitle>토이 프로젝트가 포트폴리오에 도움이 될까?</S.StyledAdCardTitle>
             <S.StyledAdDescription>실무 경험을 쌓는 효과적인 방법</S.StyledAdDescription>
           </S.StyledAdContent>
         </S.StyledAdCard>
         <S.StyledAdCard href="#">
-          <S.StyledAdImage src="/images/ads/product3.jpg" alt="추천 상품 3" />
+          <S.StyledAdImage src="/images/greenbacksin.jpg" alt="추천 상품 3" />
           <S.StyledAdContent>
             <S.StyledAdCardTitle>직장인 번아웃, 커리어가 고민될 때 생각해 볼 것들</S.StyledAdCardTitle>
             <S.StyledAdDescription>건강한 커리어를 위한 자기관리 방법</S.StyledAdDescription>
           </S.StyledAdContent>
         </S.StyledAdCard>
         <S.StyledAdCard href="#">
-          <S.StyledAdImage src="/images/ads/product4.jpg" alt="추천 상품 4" />
+          <S.StyledAdImage src="/images/green_1.jpg" alt="추천 상품 4" />
           <S.StyledAdContent>
             <S.StyledAdCardTitle>스프린트의 A-Z, 직접 돌아본 프로젝트 트랙</S.StyledAdCardTitle>
             <S.StyledAdDescription>오프라인 성장의 스케치</S.StyledAdDescription>

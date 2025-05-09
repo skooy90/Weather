@@ -10,26 +10,39 @@ export const API_ENDPOINTS = {
     CHECK_USER_ID: '/auth/check-user-id'
   },
   CONTENT: {
-    GET_ALL: '/contents',
-    GET_BY_ID: '/contents/:id',
-    GET_BY_CATEGORY: '/contents/category/:category',
-    GET_BY_SUBCATEGORY: '/contents/subcategory/:subcategory',
-    CREATE: '/contents',
-    UPDATE: '/contents/:id',
-    DELETE: '/contents/:id',
-    ADD_COMMENT: '/contents/:id/comments',
+    GET_ALL: '/content',
+    GET_BY_ID: '/content/:id',
+    GET_BY_CATEGORY: '/content/category/:category',
+    GET_BY_SUBCATEGORY: '/content/subcategory/:subcategory',
+    CREATE: '/content',
+    UPDATE: '/content/:id',
+    DELETE: '/content/:id',
+    ADD_COMMENT: '/content/:id/comment',
   },
   COMMENT: {
-    GET_ALL: '/comments',
-    GET_BY_CONTENT: '/comments/content/:contentId',
-    CREATE: '/comments',
-    UPDATE: '/comments/:id',
-    DELETE: '/comments/:id'
+    GET_ALL: '/comment',
+    GET_BY_CONTENT: '/comment/content/:contentId',
+    CREATE: '/comment',
+    UPDATE: '/comment/:id',
+    DELETE: '/comment/:id'
   },
   USER: {
-    GET_ALL: '/users',
-    GET_BY_ID: '/users/:id',
-    UPDATE: '/users/:id',
-    DELETE: '/users/:id'
+    GET_ALL: '/user',
+    GET_BY_ID: '/user/:id',
+    UPDATE: '/user/:id',
+    DELETE: '/user/:id'
+  },
+  CATEGORY: {
+    GET_ALL: '/category',
+    GET_BY_ID: '/category/:id',
+    CREATE: '/category',
+    UPDATE: '/category/:id',
+    DELETE: '/category/:id'
+  },
+  UPLOAD: {
+    FILE: '/upload',
+    PROFILE: '/upload/profile',
+    CONTENT: '/upload/content',
+    THUMBNAIL: '/upload/thumbnail'
   }
 }; 
