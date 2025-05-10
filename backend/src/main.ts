@@ -38,18 +38,18 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
 
   // CSP 헤더 설정
-  app.use((req, res, next) => {
-    res.setHeader(
-      'Content-Security-Policy',
-      "default-src 'self'; " +
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://weather-backend-knii.onrender.com; " +
-      "style-src 'self' 'unsafe-inline' https://unpkg.com https://weather-backend-knii.onrender.com; " +
-      "connect-src 'self' https://weather-backend-knii.onrender.com; " +
-      "img-src 'self' https://weather-of7u.onrender.com https://weather-backend-knii.onrender.com data: https:; " +
-      "font-src 'self' data: https: https://weather-backend-knii.onrender.com;"
-    );
-    next();
-  });
+  // app.use((req, res, next) => {
+  //   res.setHeader(
+  //     'Content-Security-Policy',
+  //     "default-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://weather-backend-knii.onrender.com; " +
+  //     "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://weather-backend-knii.onrender.com; " +
+  //     "style-src 'self' 'unsafe-inline' https://unpkg.com https://weather-backend-knii.onrender.com; " +
+  //     "connect-src 'self' https://weather-backend-knii.onrender.com; " +
+  //     "img-src 'self' https://weather-of7u.onrender.com https://weather-backend-knii.onrender.com data: https:; " +
+  //     "font-src 'self' data: https: https://weather-backend-knii.onrender.com;"
+  //   );
+  //   next();
+  // });
 
   // 전역 파이프 설정
   app.useGlobalPipes(new ValidationPipe({
