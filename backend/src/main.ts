@@ -41,12 +41,12 @@ async function bootstrap() {
   app.use((req, res, next) => {
     res.setHeader(
       'Content-Security-Policy',
-      "default-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://weather-backend-knii.onrender.com; " +
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://weather-backend-knii.onrender.com; " +
-      "style-src 'self' 'unsafe-inline' https://unpkg.com https://weather-backend-knii.onrender.com; " +
-      "connect-src 'self' https://weather-backend-knii.onrender.com; " +
-      "img-src 'self' https://weather-of7u.onrender.com https://weather-backend-knii.onrender.com data: https:; " +
-      "font-src 'self' data: https: https://weather-backend-knii.onrender.com;"
+      "default-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://*.onrender.com; " +
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://*.onrender.com; " +
+      "style-src 'self' 'unsafe-inline' https://unpkg.com https://*.onrender.com; " +
+      "connect-src 'self' https://*.onrender.com; " +
+      "img-src 'self' https://*.onrender.com data: https:; " +
+      "font-src 'self' data: https: https://*.onrender.com;"
     );
     next();
   });
