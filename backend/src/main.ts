@@ -42,11 +42,11 @@ async function bootstrap() {
     res.setHeader(
       'Content-Security-Policy',
       "default-src 'self'; " +
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; " +
-      "style-src 'self' 'unsafe-inline' https://unpkg.com; " +
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://weather-backend-knii.onrender.com; " +
+      "style-src 'self' 'unsafe-inline' https://unpkg.com https://weather-backend-knii.onrender.com; " +
       "connect-src 'self' https://weather-backend-knii.onrender.com; " +
       "img-src 'self' https://weather-of7u.onrender.com https://weather-backend-knii.onrender.com data: https:; " +
-      "font-src 'self' data: https:;"
+      "font-src 'self' data: https: https://weather-backend-knii.onrender.com;"
     );
     next();
   });
