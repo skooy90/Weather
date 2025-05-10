@@ -45,7 +45,7 @@ async function bootstrap() {
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; " +
       "style-src 'self' 'unsafe-inline' https://unpkg.com; " +
       "connect-src 'self' https://weather-backend-knii.onrender.com; " +
-      "img-src 'self' data: https:; " +
+      "img-src 'self' https://weather-of7u.onrender.com https://weather-backend-knii.onrender.com data: https:; " +
       "font-src 'self' data: https:;"
     );
     next();
